@@ -22,12 +22,16 @@ export interface IGameObject extends Drawable, Updatable {
     isActive: boolean; // アクティブ状態（描画・更新対象か）
 }
 
-export enum GameState {
-    Playing,
-    GameOver,
-}
+export const GameState = {
+    Playing: 0,
+    GameOver: 1,
+} as const;
 
-export enum BulletType {
-    Player,
-    Enemy,
-}
+export type GameState = typeof GameState[keyof typeof GameState];
+
+export const BulletType = {
+    Player: 0,
+    Enemy: 1,
+} as const;
+
+export type BulletType = typeof BulletType[keyof typeof BulletType];
