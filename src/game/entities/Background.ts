@@ -53,10 +53,30 @@ export class Background {
         }
         
         if (camera) {
+            const initialTreeCount = this.trees.length;
+            
             this.trees = this.trees.filter(tree => {
                 const screenPos = camera.worldToScreen(tree.position);
                 return screenPos.y < CANVAS_HEIGHT + tree.radius * 2; // Keep some buffer
             });
+            
+            const removedTreeCount = initialTreeCount - this.trees.length;
+            
+            for (let i = 0; i < removedTreeCount; i++) {
+                const index = Math.floor(Math.random() * 10000); // Random large index for Perlin noise
+                const radius = Math.random() * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN) + BACKGROUND_TREE_RADIUS_MIN;
+                
+                const noiseScale = 0.1;
+                const noiseX = this.perlinNoise.noise(index * noiseScale, 0) * CANVAS_WIDTH;
+                
+                const worldY = camera.position.y - radius;
+                
+                const newTree = new Tree(this.perlinNoise, index);
+                newTree.position.x = noiseX;
+                newTree.position.y = worldY;
+                
+                this.trees.push(newTree);
+            }
         }
     }
 
