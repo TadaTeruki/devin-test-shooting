@@ -78,24 +78,24 @@ export class GameScene extends BaseScene {
     draw(ctx: CanvasRenderingContext2D): void {
         this.background.draw(ctx, this.camera);
 
-        this.player.draw(ctx, this.camera);
+        this.player.draw(ctx);
 
         for (const enemy of this.enemies) {
-            enemy.draw(ctx, this.camera);
+            enemy.draw(ctx);
         }
 
         for (const bullet of this.playerBullets) {
-            bullet.draw(ctx, this.camera);
+            bullet.draw(ctx);
         }
 
         for (const bullet of this.enemyBullets) {
-            bullet.draw(ctx, this.camera);
+            bullet.draw(ctx);
         }
     }
 
     handleMouseMove(x: number, y: number): void {
         if (this.gameState !== GameState.Playing) return;
-        this.player.moveToPosition(x, y, this.camera);
+        this.player.moveToPosition(x, y);
     }
 
     handleKeyDown(key: string): void {
@@ -110,13 +110,12 @@ export class GameScene extends BaseScene {
     }
 
     private spawnEnemy(): void {
-        const screenPos: Vector2D = {
+        const position: Vector2D = {
             x: Math.random() * (CANVAS_WIDTH - ENEMY_RADIUS * 2) + ENEMY_RADIUS,
             y: -ENEMY_RADIUS
         };
         
-        const worldPos = this.camera.screenToWorld(screenPos);
-        const enemy = new Enemy(worldPos, ENEMY_RADIUS, ENEMY_COLOR, this.enemyBullets);
+        const enemy = new Enemy(position, ENEMY_RADIUS, ENEMY_COLOR, this.enemyBullets);
         this.enemies.push(enemy);
     }
 
