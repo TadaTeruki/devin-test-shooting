@@ -1,15 +1,21 @@
 import { GameObject } from './GameObject';
 import type { Vector2D } from '../interfaces';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BACKGROUND_SCROLL_SPEED, BACKGROUND_TREE_COLOR, BACKGROUND_TREE_RADIUS_MIN, BACKGROUND_TREE_RADIUS_MAX } from '../constants';
+import { PerlinNoise } from '../utils/perlin';
 
 class Tree extends GameObject {
     speed: number;
 
-    constructor() {
+    constructor(perlin: PerlinNoise, index: number) {
         const radius = Math.random() * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN) + BACKGROUND_TREE_RADIUS_MIN;
+        
+        const noiseScale = 0.1;
+        const noiseX = perlin.noise(index * noiseScale, 0) * CANVAS_WIDTH;
+        const noiseY = perlin.noise(0, index * noiseScale) * CANVAS_HEIGHT;
+        
         const position: Vector2D = {
-            x: Math.random() * CANVAS_WIDTH,
-            y: Math.random() * CANVAS_HEIGHT
+            x: noiseX,
+            y: noiseY
         };
         
         super(position, radius, BACKGROUND_TREE_COLOR);
@@ -22,19 +28,21 @@ class Tree extends GameObject {
         
         if (this.position.y - this.radius > CANVAS_HEIGHT) {
             this.position.y = -this.radius;
-            this.position.x = Math.random() * CANVAS_WIDTH;
+            this.position.x = Math.max(0, Math.min(CANVAS_WIDTH, this.position.x + (Math.random() - 0.5) * 20));
         }
     }
 }
 
 export class Background {
     trees: Tree[];
+    perlinNoise: PerlinNoise;
 
     constructor(treeCount: number) {
         this.trees = [];
+        this.perlinNoise = new PerlinNoise();
         
         for (let i = 0; i < treeCount; i++) {
-            this.trees.push(new Tree());
+            this.trees.push(new Tree(this.perlinNoise, i));
         }
     }
 
