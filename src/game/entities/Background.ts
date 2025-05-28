@@ -2,6 +2,7 @@ import { GameObject } from './GameObject';
 import type { Vector2D } from '../interfaces';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BACKGROUND_SCROLL_SPEED, BACKGROUND_TREE_COLOR, BACKGROUND_TREE_RADIUS_MIN, BACKGROUND_TREE_RADIUS_MAX } from '../constants';
 import { PerlinNoise } from '../utils/perlin';
+import type { Camera } from '../camera/Camera';
 
 class Tree extends GameObject {
     speed: number;
@@ -20,7 +21,7 @@ class Tree extends GameObject {
         
         super(position, radius, BACKGROUND_TREE_COLOR);
         
-        this.speed = BACKGROUND_SCROLL_SPEED * (radius / BACKGROUND_TREE_RADIUS_MAX) * 0.5 + BACKGROUND_SCROLL_SPEED * 0.5;
+        this.speed = BACKGROUND_SCROLL_SPEED;
     }
 
     update(deltaTime: number): void {
@@ -46,15 +47,22 @@ export class Background {
         }
     }
 
-    update(deltaTime: number): void {
+    update(deltaTime: number, camera?: Camera): void {
         for (const tree of this.trees) {
             tree.update(deltaTime);
         }
+        
+        if (camera) {
+            this.trees = this.trees.filter(tree => {
+                const screenPos = camera.worldToScreen(tree.position);
+                return screenPos.y < CANVAS_HEIGHT + tree.radius * 2; // Keep some buffer
+            });
+        }
     }
 
-    draw(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D, camera?: Camera): void {
         for (const tree of this.trees) {
-            tree.draw(ctx);
+            tree.draw(ctx, camera);
         }
     }
 }
