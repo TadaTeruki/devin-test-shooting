@@ -59,13 +59,13 @@ export class GameScene extends BaseScene {
 			this.lastEnemySpawnTime = currentTime;
 		}
 
-        for (const enemy of this.enemies) {
-            enemy.update(deltaTime);
-            const bullet = enemy.shoot(this.player.position, currentTime);
-            if (bullet) {
-                this.enemyBullets.push(bullet);
-            }
-        }
+		for (const enemy of this.enemies) {
+			enemy.update(deltaTime);
+			const bullet = enemy.shoot(this.player.position, currentTime);
+			if (bullet) {
+				this.enemyBullets.push(bullet);
+			}
+		}
 
 		for (const bullet of this.playerBullets) {
 			bullet.update(deltaTime);
@@ -111,8 +111,7 @@ export class GameScene extends BaseScene {
 		}
 	}
 
-	handleClick(_x: number, _y: number): void {	
-	}
+	handleClick(_x: number, _y: number): void {}
 
 	private getDifficultyScale(currentTime: number): number {
 		const elapsedSeconds = (currentTime - this.gameStartTime) / 1000;
@@ -120,7 +119,10 @@ export class GameScene extends BaseScene {
 		return Math.min(elapsedSeconds / maxScaleTime, 1);
 	}
 
-	private getEnemyRadiusRange(difficultyScale: number): { min: number; max: number } {
+	private getEnemyRadiusRange(difficultyScale: number): {
+		min: number;
+		max: number;
+	} {
 		const baseRadius = ENEMY_RADIUS;
 		return {
 			min: baseRadius,
@@ -128,15 +130,14 @@ export class GameScene extends BaseScene {
 		};
 	}
 
-
 	private spawnEnemy(): void {
 		const currentTime = Date.now();
 		const difficultyScale = this.getDifficultyScale(currentTime);
 		const radiusRange = this.getEnemyRadiusRange(difficultyScale);
-		
-		const radius = 
+
+		const radius =
 			radiusRange.min + Math.random() * (radiusRange.max - radiusRange.min);
-		
+
 		const position: Vector2D = {
 			x: Math.random() * (CANVAS_WIDTH - radius * 2) + radius,
 			y: -radius,
