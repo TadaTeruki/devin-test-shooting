@@ -1,6 +1,6 @@
-# Xevious-like Shooter Game
+# Vertical Scrolling Shooter Game
 
-A browser-based vertical scrolling shooter game inspired by Xevious, built with TypeScript and Vite.
+A browser-based vertical scrolling shooter game built with TypeScript and Vite.
 
 ## Features
 

@@ -1,6 +1,6 @@
 ### 1. プロジェクトの概要
 
-このプロジェクトでは、シンプルな「ゼビウス」風の縦スクロールシューティングゲームを構築します。プレイヤーはマウスで操作する自機を動かし、敵や敵の弾を避けながら、自機の弾で敵を破壊します。衝突が発生するとゲームオーバーとなり、リプレイボタンでゲームを再開できます。画像や複雑なエフェクトは使用せず、図形のみでゲームのコアメカニクスを実装します。
+このプロジェクトでは、シンプルなレトロな縦スクロールシューティングゲームを構築します。プレイヤーはマウスで操作する自機を動かし、敵や敵の弾を避けながら、自機の弾で敵を破壊します。衝突が発生するとゲームオーバーとなり、リプレイボタンでゲームを再開できます。画像や複雑なエフェクトは使用せず、図形のみでゲームのコアメカニクスを実装します。
 
 ### 2. 技術スタック
 
@@ -12,7 +12,7 @@
 ### 3. ファイル構成
 
 ```
-my-xevious-game/
+vertical-scrolling-shooter/
 ├── public/
 │   └── index.html             // メインHTMLファイル
 ├── src/
@@ -102,8 +102,8 @@ export enum BulletType {
 #### 6.1. プロジェクトの初期設定
 
 * **ステップ 1: プロジェクトの初期化**
-    * `pnpm create vite my-xevious-game --template vanilla-ts` を実行し、TypeScript対応のViteプロジェクトを作成します。
-    * `cd my-xevious-game`
+    * `pnpm create vite vertical-scrolling-shooter --template vanilla-ts` を実行し、TypeScript対応のViteプロジェクトを作成します。
+    * `cd vertical-scrolling-shooter`
     * `pnpm install`
     * `pnpm dev` で開発サーバーが起動し、ブラウザでGUIが確認できることを確認します。
 * **ステップ 2: `index.html` の設定**
@@ -114,7 +114,7 @@ export enum BulletType {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Xevious-like Shooter</title>
+        <title>Vertical Scrolling Shooter</title>
         <style>
             body {
                 margin: 0;
