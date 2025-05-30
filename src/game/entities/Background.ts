@@ -2,6 +2,8 @@ import type { Camera } from "../camera/Camera";
 import {
 	BACKGROUND_GRID_SPACING,
 	BACKGROUND_TREE_COLOR,
+	BACKGROUND_TREE_RADIUS_MAX,
+	BACKGROUND_TREE_RADIUS_MIN,
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
 } from "../constants";
@@ -44,7 +46,8 @@ export class Background {
 				// Use world coordinates as input to Perlin noise
 				const noiseValue = this.perlinNoise.noise(worldX * 0.1, worldY * 0.1);
 				
-				const treeRadius = 10 + (noiseValue + 1) * 0.5 * 20; // Maps [-1,1] to [10,30]
+				const treeRadius = BACKGROUND_TREE_RADIUS_MIN + 
+					(noiseValue + 1) * 0.5 * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN);
 
 				const screenPos = camera.worldToScreen({ x: worldX, y: worldY });
 
