@@ -1,5 +1,6 @@
 import { Camera } from "../camera/Camera";
 import {
+	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
 	ENEMY_COLOR,
 	ENEMY_RADIUS,
@@ -28,6 +29,9 @@ export class GameScene extends BaseScene {
 	gameState: GameState;
 	onGameOver: () => void;
 	gameStartTime: number;
+	isReady: boolean;
+	readyElapsedTime: number;
+	readyDuration: number;
 
 	constructor(onGameOver: () => void) {
 		super();
@@ -41,9 +45,20 @@ export class GameScene extends BaseScene {
 		this.gameStartTime = Date.now();
 		this.gameState = GameState.Playing;
 		this.onGameOver = onGameOver;
+		this.isReady = false;
+		this.readyElapsedTime = 0;
+		this.readyDuration = 3; // 3 seconds as requested
 	}
 
 	update(deltaTime: number): void {
+		if (!this.isReady) {
+			this.readyElapsedTime += deltaTime;
+			if (this.readyElapsedTime >= this.readyDuration) {
+				this.isReady = true;
+			}
+			return; // Don't update game logic during ready display
+		}
+		
 		if (this.gameState !== GameState.Playing) return;
 
 		const currentTime = Date.now();
@@ -95,15 +110,23 @@ export class GameScene extends BaseScene {
 		for (const bullet of this.enemyBullets) {
 			bullet.draw(ctx);
 		}
+		
+		if (!this.isReady) {
+			ctx.font = "bold 48px Arial";
+			ctx.fillStyle = "#FFFFFF";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText("READY?", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+		}
 	}
 
 	handleMouseMove(x: number, y: number): void {
-		if (this.gameState !== GameState.Playing) return;
+		if (!this.isReady || this.gameState !== GameState.Playing) return;
 		this.player.moveToPosition(x, y);
 	}
 
 	handleKeyDown(key: string): void {
-		if (this.gameState !== GameState.Playing) return;
+		if (!this.isReady || this.gameState !== GameState.Playing) return;
 
 		if (key === KEY_SPACE) {
 			this.shootPlayerBullet();

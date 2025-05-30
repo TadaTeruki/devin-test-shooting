@@ -10,10 +10,10 @@ export class GameOverScene extends BaseScene {
 		this.onRestart = onRestart;
 
 		this.replayButtonBounds = {
-			x: CANVAS_WIDTH / 2 - 150, // Wider button (300px) for easier clicking
-			y: CANVAS_HEIGHT / 2 - 60, // Moved up to match actual click position
-			width: 300,
-			height: 120, // Taller button to ensure clicks register
+			x: CANVAS_WIDTH / 2 - 100,
+			y: CANVAS_HEIGHT / 2 + 20,
+			width: 200,
+			height: 60,
 		};
 	}
 

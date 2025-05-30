@@ -10,11 +10,18 @@ export class TitleScene extends BaseScene {
 		this.onStart = onStart;
 
 		this.startButtonBounds = {
-			x: CANVAS_WIDTH / 2 - 150, // Wider button (300px) for easier clicking
-			y: CANVAS_HEIGHT / 2 - 120, // Moved up even more to match actual click position
-			width: 300,
-			height: 200, // Much taller button to ensure clicks register
+			x: CANVAS_WIDTH / 2 - 100,
+			y: CANVAS_HEIGHT / 2 + 20,
+			width: 200,
+			height: 60,
 		};
+		
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Enter") {
+				console.log("Enter key pressed - starting game");
+				this.onStart();
+			}
+		});
 	}
 
 	update(_deltaTime: number): void {}
@@ -41,6 +48,8 @@ export class TitleScene extends BaseScene {
 			CANVAS_WIDTH / 2,
 			this.startButtonBounds.y + this.startButtonBounds.height / 2,
 		);
+		
+		console.log("Button position:", this.startButtonBounds);
 	}
 
 	handleMouseMove(_x: number, _y: number): void {}
@@ -50,14 +59,21 @@ export class TitleScene extends BaseScene {
 	handleClick(x: number, y: number): void {
 		console.log("TitleScene handleClick", x, y, this.startButtonBounds);
 
+		const expandedBounds = {
+			x: this.startButtonBounds.x - 50,
+			y: this.startButtonBounds.y - 50,
+			width: this.startButtonBounds.width + 100,
+			height: this.startButtonBounds.height + 100
+		};
+		
 		const isInButtonX =
-			x >= this.startButtonBounds.x &&
-			x <= this.startButtonBounds.x + this.startButtonBounds.width;
+			x >= expandedBounds.x &&
+			x <= expandedBounds.x + expandedBounds.width;
 		const isInButtonY =
-			y >= this.startButtonBounds.y &&
-			y <= this.startButtonBounds.y + this.startButtonBounds.height;
+			y >= expandedBounds.y &&
+			y <= expandedBounds.y + expandedBounds.height;
 
-		console.log("Button bounds check:", { isInButtonX, isInButtonY });
+		console.log("Button bounds check:", { isInButtonX, isInButtonY, expandedBounds });
 
 		if (isInButtonX && isInButtonY) {
 			console.log("Start button clicked! Calling onStart...");

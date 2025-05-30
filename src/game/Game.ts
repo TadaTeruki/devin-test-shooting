@@ -4,7 +4,6 @@ import { GameState } from "./interfaces";
 import { GameOverScene } from "./scenes/GameOverScene";
 import { GameScene } from "./scenes/GameScene";
 import { TitleScene } from "./scenes/TitleScene";
-import { ReadyScene } from "./scenes/ReadyScene";
 
 export class Game {
 	canvas: HTMLCanvasElement;
@@ -58,22 +57,11 @@ export class Game {
 		this.gameState = GameState.Title;
 		
 		const titleScene = new TitleScene(() => {
-			this.startFromReady();
+			this.resetGame(); // Go directly to GameScene
 		});
 		
 		this.sceneManager.changeScene(titleScene);
 		this.startGame();
-	}
-	
-	startFromReady(): void {
-		this.gameState = GameState.Ready;
-		
-		const readyScene = new ReadyScene(() => {
-			this.resetGame();
-		});
-		
-		this.sceneManager.changeScene(readyScene);
-		this.startGame(); // Start the game loop for the ReadyScene
 	}
 
 	resetGame(): void {
@@ -82,7 +70,7 @@ export class Game {
 		const gameScene = new GameScene(() => {
 			this.gameState = GameState.GameOver;
 			this.sceneManager.changeScene(
-				new GameOverScene(this.startFromReady.bind(this)),
+				new GameOverScene(this.resetGame.bind(this)),
 			);
 		});
 
