@@ -1,35 +1,42 @@
-# Vertical Scrolling Shooter Game
+# 🎮 縦スクロールシューティングゲーム
 
-A browser-based vertical scrolling shooter game built with TypeScript and Vite.
+ブラウザベースのレトロな縦スクロールシューティングゲームです。
 
-## Features
+![ゲームプレイ画面](./public/screenshots/localhost_5173_141909.png)
 
-- Player-controlled ship with mouse movement
-- Enemy ships that spawn and shoot at the player
-- Collision detection
-- Game over handling with replay option
-- Scrolling background
+## 🚀 技術スタック
 
-## Development
+- **フロントエンド:** HTML5 Canvas2D
+- **言語:** TypeScript
+- **パッケージマネージャー:** pnpm
+- **ビルドツール:** Vite
 
-This project uses:
-- TypeScript
-- Vite
+## 📝 ゲーム概要
 
-### Setup
+このプロジェクトでは、シンプルなレトロな縦スクロールシューティングゲームを実装しています。プレイヤーはマウスで操作する自機を動かし、敵や敵の弾を避けながら、自機の弾で敵を破壊します。衝突が発生するとゲームオーバーとなり、リプレイボタンでゲームを再開できます。
+
+## ✨ 特徴
+
+- 🖱️ マウスで操作するプレイヤー機
+- 👾 画面上部から出現し、プレイヤーに向かって弾を発射する敵
+- 💥 衝突判定システム
+- 🔄 ゲームオーバー処理とリプレイオプション
+- 🌳 スクロール背景
+
+## 🕹️ 操作方法
+
+- 🖱️ マウスでプレイヤー機を移動
+- ⌨️ スペースキーで弾を発射
+
+## 🛠️ 開発環境のセットアップ
 
 ```bash
-# Install dependencies
+# 依存関係のインストール
 pnpm install
 
-# Run development server
+# 開発サーバーの起動
 pnpm dev
 
-# Build for production
+# 本番用ビルド
 pnpm build
 ```
-
-## Controls
-
-- Move the player ship with the mouse
-- Shoot bullets with the space key
