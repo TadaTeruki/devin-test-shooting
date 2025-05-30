@@ -19,9 +19,7 @@ export const ENEMY_BULLET_SPEED = 200;
 export const ENEMY_SHOOT_INTERVAL = 5000; // 5秒ごとに弾を発射
 
 export const BACKGROUND_TREE_COLOR = "#36454F"; // 暗い緑
-export const BACKGROUND_TREE_RADIUS_MIN = 10;
-export const BACKGROUND_TREE_RADIUS_MAX = 30;
 export const BACKGROUND_SCROLL_SPEED = 50;
-export const BACKGROUND_TREE_COUNT = 20;
+export const BACKGROUND_GRID_SPACING = 3.0;
 
 export const KEY_SPACE = " ";
