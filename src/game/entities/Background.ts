@@ -16,9 +16,13 @@ import { PerlinNoise } from "../utils/perlin";
 
 export class Background {
 	perlinNoise: PerlinNoise;
+	seaPerlinNoise: PerlinNoise;
+	seaGridMap: Map<string, boolean>;
 
 	constructor() {
 		this.perlinNoise = new PerlinNoise();
+		this.seaPerlinNoise = new PerlinNoise();
+		this.seaGridMap = new Map<string, boolean>();
 	}
 
 	update(_deltaTime: number, _camera?: Camera): void {
@@ -42,6 +46,8 @@ export class Background {
 		const minGridY = Math.floor(minLocalY / gridSpacing);
 		const maxGridY = Math.ceil(maxLocalY / gridSpacing);
 
+		this.seaGridMap.clear();
+
 		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
 			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
 				const localX = gridX * gridSpacing;
@@ -49,14 +55,16 @@ export class Background {
 
 				const worldPos = { x: gridX * gridSpacing, y: gridY * gridSpacing };
 				
-				const noiseValue = this.perlinNoise.noise(worldPos.x * 0.002, worldPos.y * 0.002);
+				const seaNoiseValue = this.seaPerlinNoise.noise(worldPos.x * 0.003, worldPos.y * 0.003);
 				
-				const seaRadius = BACKGROUND_SEA_RADIUS_MIN + noiseValue * (BACKGROUND_SEA_RADIUS_MAX - BACKGROUND_SEA_RADIUS_MIN);
-				const treeRadius = BACKGROUND_TREE_RADIUS_MIN + noiseValue * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN);
+				const seaRadius = BACKGROUND_SEA_RADIUS_MIN + seaNoiseValue * (BACKGROUND_SEA_RADIUS_MAX - BACKGROUND_SEA_RADIUS_MIN);
 
 				const screenPos = camera.worldToScreen({ x: localX, y: localY });
 
 				if (seaRadius > BACKGROUND_SEA_RADIUS_VISIBLE) {
+					const gridKey = `${gridX},${gridY}`;
+					this.seaGridMap.set(gridKey, true);
+
 					if (screenPos.x >= -seaRadius && 
 						screenPos.x <= CANVAS_WIDTH + seaRadius && 
 						screenPos.y >= -seaRadius && 
@@ -69,19 +77,37 @@ export class Background {
 						ctx.closePath();
 					}
 				}
+			}
+		}
 
-				if (seaRadius <= BACKGROUND_SEA_RADIUS_VISIBLE && treeRadius > BACKGROUND_TREE_RADIUS_VISIBLE) {
-					if (screenPos.x >= -treeRadius && 
-						screenPos.x <= CANVAS_WIDTH + treeRadius && 
-						screenPos.y >= -treeRadius && 
-						screenPos.y <= CANVAS_HEIGHT + treeRadius) {
-						
-						ctx.beginPath();
-						ctx.arc(screenPos.x, screenPos.y, treeRadius, 0, Math.PI * 2);
-						ctx.fillStyle = BACKGROUND_TREE_COLOR;
-						ctx.fill();
-						ctx.closePath();
-					}
+		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
+			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
+				const gridKey = `${gridX},${gridY}`;
+				if (this.seaGridMap.has(gridKey)) continue;
+
+				const localX = gridX * gridSpacing;
+				const localY = gridY * gridSpacing;
+
+				const worldPos = { x: gridX * gridSpacing, y: gridY * gridSpacing };
+				
+				const treeNoiseValue = this.perlinNoise.noise(worldPos.x * 0.002, worldPos.y * 0.002);
+				
+				const treeRadius = BACKGROUND_TREE_RADIUS_MIN + treeNoiseValue * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN);
+
+				if (treeRadius <= BACKGROUND_TREE_RADIUS_VISIBLE) continue;
+
+				const screenPos = camera.worldToScreen({ x: localX, y: localY });
+
+				if (screenPos.x >= -treeRadius && 
+					screenPos.x <= CANVAS_WIDTH + treeRadius && 
+					screenPos.y >= -treeRadius && 
+					screenPos.y <= CANVAS_HEIGHT + treeRadius) {
+					
+					ctx.beginPath();
+					ctx.arc(screenPos.x, screenPos.y, treeRadius, 0, Math.PI * 2);
+					ctx.fillStyle = BACKGROUND_TREE_COLOR;
+					ctx.fill();
+					ctx.closePath();
 				}
 			}
 		}
