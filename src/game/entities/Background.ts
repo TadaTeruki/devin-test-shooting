@@ -1,6 +1,10 @@
 import type { Camera } from "../camera/Camera";
 import {
 	BACKGROUND_GRID_SPACING,
+	BACKGROUND_SEA_COLOR,
+	BACKGROUND_SEA_RADIUS_MAX,
+	BACKGROUND_SEA_RADIUS_MIN,
+	BACKGROUND_SEA_RADIUS_VISIBLE,
 	BACKGROUND_TREE_COLOR,
 	BACKGROUND_TREE_RADIUS_MAX,
 	BACKGROUND_TREE_RADIUS_MIN,
@@ -47,22 +51,37 @@ export class Background {
 				
 				const noiseValue = this.perlinNoise.noise(worldPos.x * 0.002, worldPos.y * 0.002);
 				
+				const seaRadius = BACKGROUND_SEA_RADIUS_MIN + noiseValue * (BACKGROUND_SEA_RADIUS_MAX - BACKGROUND_SEA_RADIUS_MIN);
 				const treeRadius = BACKGROUND_TREE_RADIUS_MIN + noiseValue * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN);
-
-				if (treeRadius <= BACKGROUND_TREE_RADIUS_VISIBLE) continue; 
 
 				const screenPos = camera.worldToScreen({ x: localX, y: localY });
 
-				if (screenPos.x >= -treeRadius && 
-					screenPos.x <= CANVAS_WIDTH + treeRadius && 
-					screenPos.y >= -treeRadius && 
-					screenPos.y <= CANVAS_HEIGHT + treeRadius) {
-					
-					ctx.beginPath();
-					ctx.arc(screenPos.x, screenPos.y, treeRadius, 0, Math.PI * 2);
-					ctx.fillStyle = BACKGROUND_TREE_COLOR;
-					ctx.fill();
-					ctx.closePath();
+				if (seaRadius > BACKGROUND_SEA_RADIUS_VISIBLE) {
+					if (screenPos.x >= -seaRadius && 
+						screenPos.x <= CANVAS_WIDTH + seaRadius && 
+						screenPos.y >= -seaRadius && 
+						screenPos.y <= CANVAS_HEIGHT + seaRadius) {
+						
+						ctx.beginPath();
+						ctx.arc(screenPos.x, screenPos.y, seaRadius, 0, Math.PI * 2);
+						ctx.fillStyle = BACKGROUND_SEA_COLOR;
+						ctx.fill();
+						ctx.closePath();
+					}
+				}
+
+				if (seaRadius <= BACKGROUND_SEA_RADIUS_VISIBLE && treeRadius > BACKGROUND_TREE_RADIUS_VISIBLE) {
+					if (screenPos.x >= -treeRadius && 
+						screenPos.x <= CANVAS_WIDTH + treeRadius && 
+						screenPos.y >= -treeRadius && 
+						screenPos.y <= CANVAS_HEIGHT + treeRadius) {
+						
+						ctx.beginPath();
+						ctx.arc(screenPos.x, screenPos.y, treeRadius, 0, Math.PI * 2);
+						ctx.fillStyle = BACKGROUND_TREE_COLOR;
+						ctx.fill();
+						ctx.closePath();
+					}
 				}
 			}
 		}

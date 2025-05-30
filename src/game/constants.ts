@@ -26,4 +26,9 @@ export const BACKGROUND_TREE_RADIUS_MAX = 50;
 export const BACKGROUND_SCROLL_SPEED = 100;
 export const BACKGROUND_GRID_SPACING = 20.0; // BACKGROUND_TREE_RADIUS_MAX / 2
 
+export const BACKGROUND_SEA_COLOR = "#0066CC"; // 青
+export const BACKGROUND_SEA_RADIUS_MIN = 0;
+export const BACKGROUND_SEA_RADIUS_VISIBLE = 40;
+export const BACKGROUND_SEA_RADIUS_MAX = 50;
+
 export const KEY_SPACE = " ";
