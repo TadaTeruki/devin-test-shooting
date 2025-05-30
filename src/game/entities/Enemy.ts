@@ -4,7 +4,7 @@ import {
 	ENEMY_BULLET_COLOR,
 	ENEMY_BULLET_RADIUS,
 	ENEMY_BULLET_SPEED,
-	ENEMY_RADIUS,
+	ENEMY_MAX_SCALE_TIME,
 	ENEMY_SHOOT_INTERVAL,
 	ENEMY_SPEED,
 } from "../constants";
@@ -58,17 +58,14 @@ export class Enemy extends GameObject {
 
 	private getDifficultyScale(currentTime: number): number {
 		const elapsedSeconds = (currentTime - this.gameStartTime) / 1000;
-		const maxScaleTime = 120; // 120秒で最大到達
+		const maxScaleTime = ENEMY_MAX_SCALE_TIME; // 120秒で最大到達
 		return Math.min(elapsedSeconds / maxScaleTime, 1);
 	}
 
 	private getShootIntervalScale(): number {
 		const difficultyScale = this.getDifficultyScale(Date.now());
-		const timeScale = 1.0 - 0.5 * difficultyScale;
 
-		const sizeScale = this.radius / ENEMY_RADIUS;
-
-		return timeScale / sizeScale; // 大きいほど小さい値になるように除算に変更
+		return difficultyScale + 1; 
 	}
 
 	shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {

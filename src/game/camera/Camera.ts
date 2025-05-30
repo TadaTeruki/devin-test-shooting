@@ -16,14 +16,14 @@ export class Camera {
 
 	worldToScreen(worldPos: Vector2D): Vector2D {
 		return {
-			x: worldPos.x,
+			x: worldPos.x - this.position.x,
 			y: worldPos.y - this.position.y,
 		};
 	}
 
 	screenToWorld(screenPos: Vector2D): Vector2D {
 		return {
-			x: screenPos.x,
+			x: screenPos.x - this.position.x,
 			y: screenPos.y + this.position.y,
 		};
 	}
