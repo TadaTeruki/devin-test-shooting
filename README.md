@@ -2,7 +2,7 @@
 
 ブラウザベースのレトロな縦スクロールシューティングゲームです。TypeScriptとViteで構築されています。
 
-![ゲームプレイ画面](/home/ubuntu/screenshots/localhost_5173_141909.png)
+![ゲームプレイ画面](./public/screenshots/localhost_5173_141909.png)
 
 ## ゲーム概要
 
