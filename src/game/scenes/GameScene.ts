@@ -1,6 +1,5 @@
 import { Camera } from "../camera/Camera";
 import {
-	BACKGROUND_TREE_COUNT,
 	CANVAS_WIDTH,
 	ENEMY_COLOR,
 	ENEMY_RADIUS,
@@ -36,7 +35,7 @@ export class GameScene extends BaseScene {
 		this.enemies = [];
 		this.playerBullets = [];
 		this.enemyBullets = [];
-		this.background = new Background(BACKGROUND_TREE_COUNT);
+		this.background = new Background();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
 		this.gameStartTime = Date.now();

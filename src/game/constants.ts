@@ -20,9 +20,10 @@ export const ENEMY_SHOOT_INTERVAL = 1000; // 5秒ごとに弾を発射
 export const ENEMY_MAX_SCALE_TIME = 120;
 
 export const BACKGROUND_TREE_COLOR = "#36454F"; // 暗い緑
-export const BACKGROUND_TREE_RADIUS_MIN = 10;
-export const BACKGROUND_TREE_RADIUS_MAX = 30;
-export const BACKGROUND_SCROLL_SPEED = 50;
-export const BACKGROUND_TREE_COUNT = 20;
+export const BACKGROUND_TREE_RADIUS_MIN = 0;
+export const BACKGROUND_TREE_RADIUS_VISIBLE = 30;
+export const BACKGROUND_TREE_RADIUS_MAX = 50;
+export const BACKGROUND_SCROLL_SPEED = 100;
+export const BACKGROUND_GRID_SPACING = 20.0; // BACKGROUND_TREE_RADIUS_MAX / 2
 
 export const KEY_SPACE = " ";
