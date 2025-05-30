@@ -3,6 +3,8 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./constants";
 import { GameState } from "./interfaces";
 import { GameOverScene } from "./scenes/GameOverScene";
 import { GameScene } from "./scenes/GameScene";
+import { TitleScene } from "./scenes/TitleScene";
+import { ReadyScene } from "./scenes/ReadyScene";
 
 export class Game {
 	canvas: HTMLCanvasElement;
@@ -36,7 +38,7 @@ export class Game {
 		this.canvas.addEventListener("click", this.handleClick.bind(this));
 		window.addEventListener("keydown", this.handleKeyDown.bind(this));
 
-		this.resetGame();
+		this.startFromTitle();
 	}
 
 	startGame(): void {
@@ -52,18 +54,39 @@ export class Game {
 		}
 	}
 
+	startFromTitle(): void {
+		this.gameState = GameState.Title;
+		
+		const titleScene = new TitleScene(() => {
+			this.startFromReady();
+		});
+		
+		this.sceneManager.changeScene(titleScene);
+		this.startGame();
+	}
+	
+	startFromReady(): void {
+		this.gameState = GameState.Ready;
+		
+		const readyScene = new ReadyScene(() => {
+			this.resetGame();
+		});
+		
+		this.sceneManager.changeScene(readyScene);
+		this.startGame(); // Start the game loop for the ReadyScene
+	}
+
 	resetGame(): void {
 		this.gameState = GameState.Playing;
 
 		const gameScene = new GameScene(() => {
 			this.gameState = GameState.GameOver;
 			this.sceneManager.changeScene(
-				new GameOverScene(this.resetGame.bind(this)),
+				new GameOverScene(this.startFromReady.bind(this)),
 			);
 		});
 
 		this.sceneManager.changeScene(gameScene);
-		this.startGame();
 	}
 
 	gameLoop(currentTime: number): void {
