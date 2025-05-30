@@ -7,9 +7,8 @@ import { Bullet } from './Bullet';
 export class Enemy extends GameObject {
     velocity: Vector2D;
     lastShootTime: number;
-    bullets: Bullet[];
 
-    constructor(position: Vector2D, radius: number, color: string, bullets: Bullet[]) {
+    constructor(position: Vector2D, radius: number, color: string) {
         super(position, radius, color);
         
         this.velocity = {
@@ -17,8 +16,7 @@ export class Enemy extends GameObject {
             y: Math.random() * ENEMY_SPEED * 0.5 + ENEMY_SPEED * 0.3 // 下向きの速度
         };
         
-        this.lastShootTime = 0;
-        this.bullets = bullets;
+        this.lastShootTime = Date.now();
     }
 
     update(deltaTime: number): void {
@@ -36,10 +34,10 @@ export class Enemy extends GameObject {
         }
     }
 
-    shoot(playerPosition: Vector2D, currentTime: number): void {
-        if (!this.isActive) return;
+    shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {
+        if (!this.isActive) return null;
         
-        if (currentTime - this.lastShootTime < ENEMY_SHOOT_INTERVAL) return;
+        if (currentTime - this.lastShootTime < ENEMY_SHOOT_INTERVAL) return null;
         
         this.lastShootTime = currentTime;
         
@@ -60,6 +58,6 @@ export class Enemy extends GameObject {
             BulletType.Enemy
         );
         
-        this.bullets.push(bullet);
+        return bullet;
     }
 }

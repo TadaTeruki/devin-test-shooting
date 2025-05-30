@@ -59,7 +59,10 @@ export class GameScene extends BaseScene {
 
         for (const enemy of this.enemies) {
             enemy.update(deltaTime);
-            enemy.shoot(this.player.position, currentTime);
+            const bullet = enemy.shoot(this.player.position, currentTime);
+            if (bullet) {
+                this.enemyBullets.push(bullet);
+            }
         }
 
         for (const bullet of this.playerBullets) {
@@ -115,7 +118,7 @@ export class GameScene extends BaseScene {
             y: -ENEMY_RADIUS
         };
         
-        const enemy = new Enemy(position, ENEMY_RADIUS, ENEMY_COLOR, this.enemyBullets);
+        const enemy = new Enemy(position, ENEMY_RADIUS, ENEMY_COLOR);
         this.enemies.push(enemy);
     }
 
