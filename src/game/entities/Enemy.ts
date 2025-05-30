@@ -71,12 +71,12 @@ export class Enemy extends GameObject {
 		return timeScale * sizeScale;
 	}
 
-	shoot(playerPosition: Vector2D, currentTime: number): void {
-		if (!this.isActive) return;
+	shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {
+		if (!this.isActive) return null;
 
 		const scaledInterval = ENEMY_SHOOT_INTERVAL * this.getShootIntervalScale();
 		
-		if (currentTime - this.lastShootTime < scaledInterval) return;
+		if (currentTime - this.lastShootTime < scaledInterval) return null;
 
 		this.lastShootTime = currentTime;
 
@@ -96,7 +96,7 @@ export class Enemy extends GameObject {
 			bulletVelocity,
 			BulletType.Enemy,
 		);
-
-		this.bullets.push(bullet);
-	}
+        
+        return bullet;
+    }
 }

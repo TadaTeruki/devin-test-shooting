@@ -59,10 +59,13 @@ export class GameScene extends BaseScene {
 			this.lastEnemySpawnTime = currentTime;
 		}
 
-		for (const enemy of this.enemies) {
-			enemy.update(deltaTime);
-			enemy.shoot(this.player.position, currentTime);
-		}
+        for (const enemy of this.enemies) {
+            enemy.update(deltaTime);
+            const bullet = enemy.shoot(this.player.position, currentTime);
+            if (bullet) {
+                this.enemyBullets.push(bullet);
+            }
+        }
 
 		for (const bullet of this.playerBullets) {
 			bullet.update(deltaTime);
@@ -108,7 +111,8 @@ export class GameScene extends BaseScene {
 		}
 	}
 
-	handleClick(_x: number, _y: number): void {}
+	handleClick(_x: number, _y: number): void {	
+	}
 
 	private getDifficultyScale(currentTime: number): number {
 		const elapsedSeconds = (currentTime - this.gameStartTime) / 1000;
