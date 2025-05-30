@@ -65,18 +65,18 @@ export class Enemy extends GameObject {
 	private getShootIntervalScale(): number {
 		const difficultyScale = this.getDifficultyScale(Date.now());
 		const timeScale = 1.0 - 0.5 * difficultyScale;
-		
+
 		const sizeScale = ENEMY_RADIUS / this.radius;
-		
+
 		return timeScale * sizeScale;
 	}
 
-	shoot(playerPosition: Vector2D, currentTime: number): void {
-		if (!this.isActive) return;
+	shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {
+		if (!this.isActive) return null;
 
 		const scaledInterval = ENEMY_SHOOT_INTERVAL * this.getShootIntervalScale();
-		
-		if (currentTime - this.lastShootTime < scaledInterval) return;
+
+		if (currentTime - this.lastShootTime < scaledInterval) return null;
 
 		this.lastShootTime = currentTime;
 
@@ -97,6 +97,6 @@ export class Enemy extends GameObject {
 			BulletType.Enemy,
 		);
 
-		this.bullets.push(bullet);
+		return bullet;
 	}
 }
