@@ -4,6 +4,7 @@ import {
 	ENEMY_BULLET_COLOR,
 	ENEMY_BULLET_RADIUS,
 	ENEMY_BULLET_SPEED,
+	ENEMY_MAX_SCALE_TIME,
 	ENEMY_SHOOT_INTERVAL,
 	ENEMY_SPEED,
 } from "../constants";
@@ -16,12 +17,14 @@ export class Enemy extends GameObject {
 	velocity: Vector2D;
 	lastShootTime: number;
 	bullets: Bullet[];
+	gameStartTime: number;
 
 	constructor(
 		position: Vector2D,
 		radius: number,
 		color: string,
 		bullets: Bullet[],
+		gameStartTime: number,
 	) {
 		super(position, radius, color);
 
@@ -32,6 +35,7 @@ export class Enemy extends GameObject {
 
 		this.lastShootTime = 0;
 		this.bullets = bullets;
+		this.gameStartTime = gameStartTime;
 	}
 
 	update(deltaTime: number): void {
@@ -52,10 +56,24 @@ export class Enemy extends GameObject {
 		}
 	}
 
-	shoot(playerPosition: Vector2D, currentTime: number): void {
-		if (!this.isActive) return;
+	private getDifficultyScale(currentTime: number): number {
+		const elapsedSeconds = (currentTime - this.gameStartTime) / 1000;
+		const maxScaleTime = ENEMY_MAX_SCALE_TIME; // 120秒で最大到達
+		return Math.min(elapsedSeconds / maxScaleTime, 1);
+	}
 
-		if (currentTime - this.lastShootTime < ENEMY_SHOOT_INTERVAL) return;
+	private getShootIntervalScale(): number {
+		const difficultyScale = this.getDifficultyScale(Date.now());
+
+		return difficultyScale + 1; 
+	}
+
+	shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {
+		if (!this.isActive) return null;
+
+		const scaledInterval = ENEMY_SHOOT_INTERVAL * this.getShootIntervalScale();
+
+		if (currentTime - this.lastShootTime < scaledInterval) return null;
 
 		this.lastShootTime = currentTime;
 
@@ -76,6 +94,6 @@ export class Enemy extends GameObject {
 			BulletType.Enemy,
 		);
 
-		this.bullets.push(bullet);
+		return bullet;
 	}
 }

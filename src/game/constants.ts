@@ -16,7 +16,8 @@ export const PLAYER_BULLET_SPEED = 300;
 export const ENEMY_BULLET_RADIUS = 5;
 export const ENEMY_BULLET_COLOR = "#FF0000"; // 赤
 export const ENEMY_BULLET_SPEED = 200;
-export const ENEMY_SHOOT_INTERVAL = 5000; // 5秒ごとに弾を発射
+export const ENEMY_SHOOT_INTERVAL = 1000; // 5秒ごとに弾を発射
+export const ENEMY_MAX_SCALE_TIME = 120;
 
 export const BACKGROUND_TREE_COLOR = "#36454F"; // 暗い緑
 export const BACKGROUND_TREE_RADIUS_MIN = 10;
