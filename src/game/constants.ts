@@ -26,4 +26,17 @@ export const BACKGROUND_TREE_RADIUS_MAX = 50;
 export const BACKGROUND_SCROLL_SPEED = 100;
 export const BACKGROUND_GRID_SPACING = 20.0; // BACKGROUND_TREE_RADIUS_MAX / 2
 
+export const BACKGROUND_COLOR_GREEN = "#36454F"; // 暗い緑
+export const BACKGROUND_COLOR_LIGHT_GREEN = "#90EE90"; // 淡い黄緑
+
+export const BACKGROUND_NOISE_SCALE_X = 0.02;
+export const BACKGROUND_NOISE_SCALE_Y = 0.08;
+
+export const SHADOW_OFFSET_X = 30;
+export const SHADOW_OFFSET_Y = 30;
+export const SHADOW_COLOR = "rgba(0, 0, 0, 0.3)";
+
+export const PLAYER_IMAGE_PATH = "/assets/player.png";
+export const ENEMY_IMAGE_PATH = "/assets/enemy.png";
+
 export const KEY_SPACE = " ";

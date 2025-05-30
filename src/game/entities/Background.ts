@@ -1,6 +1,10 @@
 import type { Camera } from "../camera/Camera";
 import {
+	BACKGROUND_COLOR_GREEN,
+	BACKGROUND_COLOR_LIGHT_GREEN,
 	BACKGROUND_GRID_SPACING,
+	BACKGROUND_NOISE_SCALE_X,
+	BACKGROUND_NOISE_SCALE_Y,
 	BACKGROUND_TREE_COLOR,
 	BACKGROUND_TREE_RADIUS_MAX,
 	BACKGROUND_TREE_RADIUS_MIN,
@@ -21,7 +25,49 @@ export class Background {
 	}
 
 	draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
+		this.drawBackgroundNoise(ctx, camera);
 
+		this.drawTrees(ctx, camera);
+	}
+
+	/**
+	 * パーリンノイズを使用した背景色を描画
+	 */
+	private drawBackgroundNoise(ctx: CanvasRenderingContext2D, camera: Camera): void {
+		const gridSize = 10; // 背景グリッドのサイズ
+
+		const topLeft = camera.screenToWorld({ x: 0, y: 0 });
+		const bottomRight = camera.screenToWorld({ x: CANVAS_WIDTH, y: CANVAS_HEIGHT });
+
+		const minGridX = Math.floor(topLeft.x / gridSize);
+		const maxGridX = Math.ceil(bottomRight.x / gridSize);
+		const minGridY = Math.floor(topLeft.y / gridSize);
+		const maxGridY = Math.ceil(bottomRight.y / gridSize);
+
+		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
+			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
+				const worldPos = { x: gridX * gridSize, y: gridY * gridSize };
+				const screenPos = camera.worldToScreen(worldPos);
+
+				const noiseValue = this.perlinNoise.noise(
+					worldPos.x * BACKGROUND_NOISE_SCALE_X, 
+					worldPos.y * BACKGROUND_NOISE_SCALE_Y
+				);
+
+				const backgroundColor = noiseValue > 0.5 
+					? BACKGROUND_COLOR_GREEN 
+					: BACKGROUND_COLOR_LIGHT_GREEN;
+
+				ctx.fillStyle = backgroundColor;
+				ctx.fillRect(screenPos.x, screenPos.y, gridSize + 1, gridSize + 1);
+			}
+		}
+	}
+
+	/**
+	 * 木を描画
+	 */
+	private drawTrees(ctx: CanvasRenderingContext2D, camera: Camera): void {
 		const gridSpacing = BACKGROUND_GRID_SPACING;
 
 		const topLeft = camera.screenToWorld({ x: 0, y: 0 });
