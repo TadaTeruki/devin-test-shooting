@@ -43,9 +43,8 @@ export class Background {
 				const localX = gridX * gridSpacing;
 				const localY = gridY * gridSpacing;
 
-				const worldPos = camera.screenToWorld({ x: localX, y: localY });
-
-				// Use world coordinates as input to Perlin noise
+				const worldPos = { x: gridX * gridSpacing, y: gridY * gridSpacing };
+				
 				const noiseValue = this.perlinNoise.noise(worldPos.x * 0.002, worldPos.y * 0.002);
 				
 				const treeRadius = BACKGROUND_TREE_RADIUS_MIN + noiseValue * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN);
@@ -54,11 +53,17 @@ export class Background {
 
 				const screenPos = camera.worldToScreen({ x: localX, y: localY });
 
-				ctx.beginPath();
-				ctx.arc(screenPos.x, screenPos.y, treeRadius, 0, Math.PI * 2);
-				ctx.fillStyle = BACKGROUND_TREE_COLOR;
-				ctx.fill();
-				ctx.closePath();
+				if (screenPos.x >= -treeRadius && 
+					screenPos.x <= CANVAS_WIDTH + treeRadius && 
+					screenPos.y >= -treeRadius && 
+					screenPos.y <= CANVAS_HEIGHT + treeRadius) {
+					
+					ctx.beginPath();
+					ctx.arc(screenPos.x, screenPos.y, treeRadius, 0, Math.PI * 2);
+					ctx.fillStyle = BACKGROUND_TREE_COLOR;
+					ctx.fill();
+					ctx.closePath();
+				}
 			}
 		}
 	}
