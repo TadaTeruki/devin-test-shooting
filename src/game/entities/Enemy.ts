@@ -66,9 +66,9 @@ export class Enemy extends GameObject {
 		const difficultyScale = this.getDifficultyScale(Date.now());
 		const timeScale = 1.0 - 0.5 * difficultyScale;
 
-		const sizeScale = ENEMY_RADIUS / this.radius;
+		const sizeScale = this.radius / ENEMY_RADIUS;
 
-		return timeScale * sizeScale;
+		return timeScale / sizeScale; // 大きいほど小さい値になるように除算に変更
 	}
 
 	shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {
