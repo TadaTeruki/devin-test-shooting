@@ -36,4 +36,7 @@ export const BACKGROUND_SEA_RADIUS_VISIBLE = 40;
 export const BACKGROUND_SEA_RADIUS_MAX = 50;
 export const BACKGROUND_SEA_NOISE_SCALE = 0.003;
 
+export const BACKGROUND_BEACH_COLOR = "#FFD700"; // 薄橙色
+export const BACKGROUND_BEACH_RADIUS_FACTOR = 1.2; // 海の半径に対する倍率
+
 export const KEY_SPACE = " ";
