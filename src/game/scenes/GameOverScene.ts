@@ -10,10 +10,10 @@ export class GameOverScene extends BaseScene {
         this.onRestart = onRestart;
         
         this.replayButtonBounds = {
-            x: 0,
-            y: 0,
-            width: CANVAS_WIDTH,
-            height: CANVAS_HEIGHT
+            x: CANVAS_WIDTH / 2 - 100,  // Center horizontally with 200px width
+            y: CANVAS_HEIGHT / 2 + 20,  // Position below the "GAME OVER" text
+            width: 200,
+            height: 60
         };
     }
 

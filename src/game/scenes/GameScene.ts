@@ -3,6 +3,7 @@ import { Player } from '../entities/Player';
 import { Enemy } from '../entities/Enemy';
 import { Bullet } from '../entities/Bullet';
 import { Background } from '../entities/Background';
+import { Camera } from '../camera/Camera';
 import { GameState, BulletType } from '../interfaces';
 import type { Vector2D } from '../interfaces';
 import { 
@@ -23,6 +24,7 @@ export class GameScene extends BaseScene {
     playerBullets: Bullet[];
     enemyBullets: Bullet[];
     background: Background;
+    camera: Camera;
     lastEnemySpawnTime: number;
     gameState: GameState;
     onGameOver: () => void;
@@ -34,6 +36,7 @@ export class GameScene extends BaseScene {
         this.playerBullets = [];
         this.enemyBullets = [];
         this.background = new Background(BACKGROUND_TREE_COUNT);
+        this.camera = new Camera();
         this.lastEnemySpawnTime = 0;
         this.gameState = GameState.Playing;
         this.onGameOver = onGameOver;
@@ -44,7 +47,8 @@ export class GameScene extends BaseScene {
 
         const currentTime = Date.now();
 
-        this.background.update(deltaTime);
+        this.camera.update(deltaTime);
+        this.background.update(deltaTime, this.camera);
 
         this.player.update(deltaTime);
 
@@ -72,7 +76,7 @@ export class GameScene extends BaseScene {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        this.background.draw(ctx);
+        this.background.draw(ctx, this.camera);
 
         this.player.draw(ctx);
 
