@@ -1,9 +1,9 @@
 import { SceneManager } from "./SceneManager";
-import { 
-	CANVAS_HEIGHT, 
-	CANVAS_WIDTH, 
-	ENEMY_IMAGE_PATH, 
-	PLAYER_IMAGE_PATH 
+import {
+	CANVAS_HEIGHT,
+	CANVAS_WIDTH,
+	ENEMY_IMAGE_PATH,
+	PLAYER_IMAGE_PATH,
 } from "./constants";
 import { GameState } from "./interfaces";
 import { GameOverScene } from "./scenes/GameOverScene";
@@ -54,7 +54,7 @@ export class Game {
 		const imageManager = ImageManager.getInstance();
 		return imageManager.preloadImages([
 			{ key: "player", src: PLAYER_IMAGE_PATH },
-			{ key: "enemy", src: ENEMY_IMAGE_PATH }
+			{ key: "enemy", src: ENEMY_IMAGE_PATH },
 		]);
 	}
 
@@ -73,11 +73,11 @@ export class Game {
 
 	startFromTitle(): void {
 		this.gameState = GameState.Title;
-		
+
 		const titleScene = new TitleScene(() => {
 			this.resetGame(); // Go directly to GameScene
 		});
-		
+
 		this.sceneManager.changeScene(titleScene);
 		this.startGame();
 	}

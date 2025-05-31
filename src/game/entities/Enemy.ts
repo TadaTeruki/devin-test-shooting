@@ -38,16 +38,17 @@ export class Enemy extends GameObject {
 		this.lastShootTime = 0;
 		this.bullets = bullets;
 		this.gameStartTime = gameStartTime;
-		
+
 		this.hasShadow = true;
 
 		const imageManager = ImageManager.getInstance();
-		imageManager.loadImage("enemy", ENEMY_IMAGE_PATH)
-			.then(img => {
+		imageManager
+			.loadImage("enemy", ENEMY_IMAGE_PATH)
+			.then((img) => {
 				this.image = img;
 				this.imageLoaded = true;
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.error("Failed to load enemy image:", error);
 			});
 	}
@@ -79,7 +80,7 @@ export class Enemy extends GameObject {
 	private getShootIntervalScale(): number {
 		const difficultyScale = this.getDifficultyScale(Date.now());
 
-		return difficultyScale + 1; 
+		return difficultyScale + 1;
 	}
 
 	shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {
