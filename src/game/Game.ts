@@ -9,6 +9,7 @@ import { GameState } from "./interfaces";
 import { GameOverScene } from "./scenes/GameOverScene";
 import { GameScene } from "./scenes/GameScene";
 import { ImageManager } from "./utils/ImageManager";
+import { TitleScene } from "./scenes/TitleScene";
 
 export class Game {
 	canvas: HTMLCanvasElement;
@@ -42,12 +43,8 @@ export class Game {
 		this.canvas.addEventListener("click", this.handleClick.bind(this));
 		window.addEventListener("keydown", this.handleKeyDown.bind(this));
 
-		this.preloadImages().then(() => {
-			this.resetGame();
-		}).catch(error => {
-			console.error("Failed to preload images:", error);
-			this.resetGame(); // エラーが発生しても続行
-		});
+		this.preloadImages();
+		this.startFromTitle();
 	}
 
 	/**
@@ -74,6 +71,17 @@ export class Game {
 		}
 	}
 
+	startFromTitle(): void {
+		this.gameState = GameState.Title;
+		
+		const titleScene = new TitleScene(() => {
+			this.resetGame(); // Go directly to GameScene
+		});
+		
+		this.sceneManager.changeScene(titleScene);
+		this.startGame();
+	}
+
 	resetGame(): void {
 		this.gameState = GameState.Playing;
 
@@ -85,7 +93,6 @@ export class Game {
 		});
 
 		this.sceneManager.changeScene(gameScene);
-		this.startGame();
 	}
 
 	gameLoop(currentTime: number): void {

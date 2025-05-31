@@ -1,5 +1,6 @@
 import { Camera } from "../camera/Camera";
 import {
+	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
 	ENEMY_COLOR,
 	ENEMY_RADIUS,
@@ -8,6 +9,7 @@ import {
 	PLAYER_BULLET_COLOR,
 	PLAYER_BULLET_RADIUS,
 	PLAYER_BULLET_SPEED,
+	READY_DISPLAY_DURATION,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
@@ -28,6 +30,9 @@ export class GameScene extends BaseScene {
 	gameState: GameState;
 	onGameOver: () => void;
 	gameStartTime: number;
+	isReady: boolean;
+	readyElapsedTime: number;
+	readyDuration: number;
 
 	constructor(onGameOver: () => void) {
 		super();
@@ -41,9 +46,19 @@ export class GameScene extends BaseScene {
 		this.gameStartTime = Date.now();
 		this.gameState = GameState.Playing;
 		this.onGameOver = onGameOver;
+		this.isReady = false;
+		this.readyElapsedTime = 0;
+		this.readyDuration = READY_DISPLAY_DURATION;
 	}
 
 	update(deltaTime: number): void {
+		if (!this.isReady) {
+			this.readyElapsedTime += deltaTime;
+			if (this.readyElapsedTime >= this.readyDuration) {
+				this.isReady = true;
+			}
+		}
+		
 		if (this.gameState !== GameState.Playing) return;
 
 		const currentTime = Date.now();
@@ -94,6 +109,14 @@ export class GameScene extends BaseScene {
 
 		for (const bullet of this.enemyBullets) {
 			bullet.draw(ctx);
+		}
+		
+		if (!this.isReady) {
+			ctx.font = "bold 48px Arial";
+			ctx.fillStyle = "#FFFFFF";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText("READY?", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
 		}
 	}
 

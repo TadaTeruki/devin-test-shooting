@@ -23,8 +23,10 @@ export interface IGameObject extends Drawable, Updatable {
 }
 
 export const GameState = {
-	Playing: 0,
-	GameOver: 1,
+	Title: 0,
+	Ready: 1,
+	Playing: 2,
+	GameOver: 3,
 } as const;
 
 export type GameState = (typeof GameState)[keyof typeof GameState];
