@@ -9,6 +9,7 @@ import {
 	PLAYER_BULLET_COLOR,
 	PLAYER_BULLET_RADIUS,
 	PLAYER_BULLET_SPEED,
+	READY_DISPLAY_DURATION,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
@@ -47,7 +48,7 @@ export class GameScene extends BaseScene {
 		this.onGameOver = onGameOver;
 		this.isReady = false;
 		this.readyElapsedTime = 0;
-		this.readyDuration = 3; // 3 seconds as requested
+		this.readyDuration = READY_DISPLAY_DURATION;
 	}
 
 	update(deltaTime: number): void {
@@ -56,7 +57,6 @@ export class GameScene extends BaseScene {
 			if (this.readyElapsedTime >= this.readyDuration) {
 				this.isReady = true;
 			}
-			return; // Don't update game logic during ready display
 		}
 		
 		if (this.gameState !== GameState.Playing) return;
