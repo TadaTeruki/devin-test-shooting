@@ -22,6 +22,12 @@ import {
 	BACKGROUND_TREE_SHADOW_OFFSET_Y,
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
+	ROAD_COLOR,
+	ROAD_WIDTH,
+	ROAD_LINE_COLOR,
+	ROAD_LINE_WIDTH,
+	ROAD_LINE_LENGTH,
+	ROAD_LINE_GAP,
 } from "../constants";
 import { PerlinNoise } from "../utils/perlin";
 
@@ -38,7 +44,7 @@ export class Background {
 
 	draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
 		this.drawBackgroundNoise(ctx, camera);
-
+		this.drawRoad(ctx, camera);
 		this.drawTrees(ctx, camera);
 	}
 
@@ -120,7 +126,7 @@ export class Background {
 	}
 
 	// 木のノイズ値と半径を計算
-	private getTreeNoiseAndRadius(
+	public getTreeNoiseAndRadius(
 		worldX: number,
 		worldY: number,
 	): { noiseValue: number; radius: number } {
@@ -149,6 +155,51 @@ export class Background {
 
 		const { radius } = this.getTreeNoiseAndRadius(worldX, worldY);
 		return radius > BACKGROUND_TREE_RADIUS_VISIBLE;
+	}
+
+	private drawRoad(ctx: CanvasRenderingContext2D, camera: Camera): void {
+		const topLeft = camera.screenToWorld({ x: 0, y: 0 });
+		const bottomRight = camera.screenToWorld({
+			x: CANVAS_WIDTH,
+			y: CANVAS_HEIGHT,
+		});
+
+		const roadWorldX = 0;
+		const roadScreenPos = camera.worldToScreen({ x: roadWorldX, y: 0 });
+		const roadScreenX = roadScreenPos.x - ROAD_WIDTH / 2;
+
+		ctx.fillStyle = ROAD_COLOR;
+		ctx.fillRect(roadScreenX, 0, ROAD_WIDTH, CANVAS_HEIGHT);
+
+		ctx.fillStyle = ROAD_LINE_COLOR;
+		const lineScreenX = roadScreenPos.x - ROAD_LINE_WIDTH / 2;
+
+		const startWorldY = topLeft.y;
+		const endWorldY = bottomRight.y;
+
+		for (
+			let worldY =
+				Math.floor(startWorldY / (ROAD_LINE_LENGTH + ROAD_LINE_GAP)) *
+				(ROAD_LINE_LENGTH + ROAD_LINE_GAP);
+			worldY <= endWorldY + ROAD_LINE_LENGTH + ROAD_LINE_GAP;
+			worldY += ROAD_LINE_LENGTH + ROAD_LINE_GAP
+		) {
+			const lineStartPos = camera.worldToScreen({ x: roadWorldX, y: worldY });
+			const lineEndPos = camera.worldToScreen({
+				x: roadWorldX,
+				y: worldY + ROAD_LINE_LENGTH,
+			});
+
+			if (lineEndPos.y >= 0 && lineStartPos.y <= CANVAS_HEIGHT) {
+				const clampedStartY = Math.max(0, lineStartPos.y);
+				const clampedEndY = Math.min(CANVAS_HEIGHT, lineEndPos.y);
+				const lineHeight = clampedEndY - clampedStartY;
+
+				if (lineHeight > 0) {
+					ctx.fillRect(lineScreenX, clampedStartY, ROAD_LINE_WIDTH, lineHeight);
+				}
+			}
+		}
 	}
 
 	// ビーチの描画

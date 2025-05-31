@@ -54,3 +54,10 @@ export const BACKGROUND_BEACH_RADIUS_FACTOR = 1.5; // 海の半径に対する�
 export const KEY_SPACE = " ";
 
 export const READY_DISPLAY_DURATION = 3; // seconds
+
+export const ROAD_COLOR = "#404040";
+export const ROAD_WIDTH = 200;
+export const ROAD_LINE_COLOR = "#FFFFFF";
+export const ROAD_LINE_WIDTH = 4;
+export const ROAD_LINE_LENGTH = 30;
+export const ROAD_LINE_GAP = 20;
