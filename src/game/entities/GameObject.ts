@@ -33,18 +33,20 @@ export abstract class GameObject implements IGameObject, Collidable {
 		const shadowX = position.x + SHADOW_OFFSET_X;
 		const shadowY = position.y + SHADOW_OFFSET_Y;
 
+		const shadowWorldPos = camera ? camera.screenToWorld({ x: shadowX, y: shadowY }) : { x: shadowX, y: shadowY };
+
 		let isOverSea = false;
 		if (background && camera) {
-			const worldShadowPos = camera.screenToWorld({ x: shadowX, y: shadowY });
-			isOverSea = background.isPositionOverSea(worldShadowPos.x, worldShadowPos.y);
+			isOverSea = background.isSeaAvailable(shadowWorldPos.x, shadowWorldPos.y);
 		}
 
 		if (this.image && this.imageLoaded) {
 			ctx.save();
 			if (isOverSea) {
 				ctx.globalAlpha = 0.3;
+				ctx.filter = 'brightness(0.5)';
 			} else {
-				ctx.globalAlpha = 1.0;
+				ctx.globalAlpha = 0.5;
 				ctx.filter = 'brightness(0)';
 			}
 			ctx.drawImage(
@@ -59,6 +61,7 @@ export abstract class GameObject implements IGameObject, Collidable {
 			ctx.beginPath();
 			ctx.arc(shadowX, shadowY, this.radius, 0, Math.PI * 2);
 			if (isOverSea) {
+				console.log("Drawing shadow over sea, using SHADOW_COLOR");
 				ctx.fillStyle = SHADOW_COLOR;
 			} else {
 				ctx.fillStyle = "#000000";
@@ -71,23 +74,19 @@ export abstract class GameObject implements IGameObject, Collidable {
 	draw(ctx: CanvasRenderingContext2D, camera?: Camera, background?: Background): void {
 		if (!this.isActive) return;
 
-		const position = camera
-			? camera.worldToScreen(this.position)
-			: this.position;
-
-		this.drawShadow(ctx, position, background, camera);
+		this.drawShadow(ctx, this.position, background, camera);
 
 		if (this.image && this.imageLoaded) {
 			ctx.drawImage(
 				this.image,
-				position.x - this.radius,
-				position.y - this.radius,
+				this.position.x - this.radius,
+				this.position.y - this.radius,
 				this.radius * 2,
 				this.radius * 2
 			);
 		} else {
 			ctx.beginPath();
-			ctx.arc(position.x, position.y, this.radius, 0, Math.PI * 2);
+			ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
 			ctx.fillStyle = this.color;
 			ctx.fill();
 			ctx.closePath();

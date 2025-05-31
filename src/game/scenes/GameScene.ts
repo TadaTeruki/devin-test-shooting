@@ -99,7 +99,7 @@ export class GameScene extends BaseScene {
 
 	handleMouseMove(x: number, y: number): void {
 		if (this.gameState !== GameState.Playing) return;
-		this.player.moveToPosition(x, y, this.camera);
+		this.player.moveToPosition(x, y);
 	}
 
 	handleKeyDown(key: string): void {
