@@ -10,6 +10,11 @@ import {
 	PLAYER_BULLET_RADIUS,
 	PLAYER_BULLET_SPEED,
 	READY_DISPLAY_DURATION,
+	SCORE_PER_ENEMY,
+	SCORE_DISPLAY_FONT,
+	SCORE_DISPLAY_COLOR,
+	SCORE_DISPLAY_X,
+	SCORE_DISPLAY_Y,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
@@ -27,6 +32,7 @@ export class GameScene extends BaseScene {
 	background: Background;
 	camera: Camera;
 	lastEnemySpawnTime: number;
+	score: number;
 	gameState: GameState;
 	onGameOver: () => void;
 	gameStartTime: number;
@@ -43,6 +49,7 @@ export class GameScene extends BaseScene {
 		this.background = new Background();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
+		this.score = 0;
 		this.gameStartTime = Date.now();
 		this.gameState = GameState.Playing;
 		this.onGameOver = onGameOver;
@@ -110,6 +117,16 @@ export class GameScene extends BaseScene {
 		for (const bullet of this.enemyBullets) {
 			bullet.draw(ctx);
 		}
+
+		ctx.font = SCORE_DISPLAY_FONT;
+		ctx.fillStyle = SCORE_DISPLAY_COLOR;
+		ctx.textAlign = "right";
+		ctx.textBaseline = "top";
+		ctx.fillText(
+			this.score.toString().padStart(6, "0"),
+			SCORE_DISPLAY_X,
+			SCORE_DISPLAY_Y,
+		);
 
 		if (!this.isReady) {
 			ctx.font = "bold 48px Arial";
@@ -221,6 +238,7 @@ export class GameScene extends BaseScene {
 				if (bullet.isColliding(enemy)) {
 					bullet.isActive = false;
 					enemy.isActive = false;
+					this.score += SCORE_PER_ENEMY;
 					break;
 				}
 			}
