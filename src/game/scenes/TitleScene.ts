@@ -1,16 +1,27 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../constants";
+import {
+	CANVAS_HEIGHT,
+	CANVAS_WIDTH,
+	TITLE_BACKGROUND_COLOR,
+	TITLE_PLAYER_IMAGE_X_RATIO,
+	TITLE_UI_X_RATIO,
+	PLAYER_IMAGE_PATH,
+} from "../constants";
+import { ImageManager } from "../utils/ImageManager";
 import { BaseScene } from "./BaseScene";
 
 export class TitleScene extends BaseScene {
 	onStart: () => void;
 	startButtonBounds: { x: number; y: number; width: number; height: number };
+	playerImage: HTMLImageElement | null;
 
 	constructor(onStart: () => void) {
 		super();
 		this.onStart = onStart;
+		this.playerImage = ImageManager.getInstance().getImage(PLAYER_IMAGE_PATH);
 
+		const uiCenterX = CANVAS_WIDTH * TITLE_UI_X_RATIO;
 		this.startButtonBounds = {
-			x: CANVAS_WIDTH / 2 - 100,
+			x: uiCenterX - 100,
 			y: CANVAS_HEIGHT / 2 + 20,
 			width: 200,
 			height: 60,
@@ -27,11 +38,28 @@ export class TitleScene extends BaseScene {
 	update(_deltaTime: number): void {}
 
 	draw(ctx: CanvasRenderingContext2D): void {
+		ctx.fillStyle = TITLE_BACKGROUND_COLOR;
+		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+		if (this.playerImage) {
+			const playerImageX = CANVAS_WIDTH * TITLE_PLAYER_IMAGE_X_RATIO;
+			const playerImageY = CANVAS_HEIGHT / 2;
+			const imageSize = 200;
+			ctx.drawImage(
+				this.playerImage,
+				playerImageX - imageSize / 2,
+				playerImageY - imageSize / 2,
+				imageSize,
+				imageSize,
+			);
+		}
+
+		const uiCenterX = CANVAS_WIDTH * TITLE_UI_X_RATIO;
 		ctx.font = "bold 48px Arial";
 		ctx.fillStyle = "#FFFFFF";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
-		ctx.fillText("Pevious ペビウス", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 50);
+		ctx.fillText("Pevious ペビウス", uiCenterX, CANVAS_HEIGHT / 2 - 50);
 
 		ctx.fillStyle = "#4CAF50";
 		ctx.fillRect(
@@ -45,7 +73,7 @@ export class TitleScene extends BaseScene {
 		ctx.fillStyle = "#FFFFFF";
 		ctx.fillText(
 			"START",
-			CANVAS_WIDTH / 2,
+			CANVAS_WIDTH * TITLE_UI_X_RATIO,
 			this.startButtonBounds.y + this.startButtonBounds.height / 2,
 		);
 
