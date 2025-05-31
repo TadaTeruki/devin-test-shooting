@@ -97,18 +97,18 @@ export class GameScene extends BaseScene {
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.background.draw(ctx, this.camera);
 
-		this.player.draw(ctx);
+		this.player.draw(ctx, this.camera, this.background);
 
 		for (const enemy of this.enemies) {
-			enemy.draw(ctx);
+			enemy.draw(ctx, this.camera, this.background);
 		}
 
 		for (const bullet of this.playerBullets) {
-			bullet.draw(ctx);
+			bullet.draw(ctx, this.camera, this.background);
 		}
 
 		for (const bullet of this.enemyBullets) {
-			bullet.draw(ctx);
+			bullet.draw(ctx, this.camera, this.background);
 		}
 
 		if (!this.isReady) {

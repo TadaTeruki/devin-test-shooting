@@ -1,5 +1,10 @@
 import type { Camera } from "../camera/Camera";
-import { SHADOW_COLOR, SHADOW_OFFSET_X, SHADOW_OFFSET_Y } from "../constants";
+import {
+	SHADOW_COLOR,
+	SHADOW_OFFSET_X,
+	SHADOW_OFFSET_Y,
+	SHADOW_OFFSET_TREE_ADJUSTMENT,
+} from "../constants";
 import type { Collidable, IGameObject, Vector2D } from "../interfaces";
 import { generateId } from "../utils";
 import type { Background } from "./Background";
@@ -35,8 +40,23 @@ export abstract class GameObject implements IGameObject, Collidable {
 	): void {
 		if (!this.hasShadow) return;
 
-		const shadowX = position.x + SHADOW_OFFSET_X;
-		const shadowY = position.y + SHADOW_OFFSET_Y;
+		let offsetX = SHADOW_OFFSET_X;
+		let offsetY = SHADOW_OFFSET_Y;
+
+		if (background) {
+			const worldPos = camera ? camera.screenToWorld(position) : position;
+			const { noiseValue } = background.getTreeNoiseAndRadius(
+				worldPos.x,
+				worldPos.y,
+			);
+			if (noiseValue > 0.3) {
+				offsetX += SHADOW_OFFSET_TREE_ADJUSTMENT;
+				offsetY += SHADOW_OFFSET_TREE_ADJUSTMENT;
+			}
+		}
+
+		const shadowX = position.x + offsetX;
+		const shadowY = position.y + offsetY;
 
 		const shadowWorldPos = camera
 			? camera.screenToWorld({ x: shadowX, y: shadowY })

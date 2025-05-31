@@ -54,3 +54,8 @@ export const BACKGROUND_BEACH_RADIUS_FACTOR = 1.5; // 海の半径に対する�
 export const KEY_SPACE = " ";
 
 export const READY_DISPLAY_DURATION = 3; // seconds
+
+export const BULLET_AFTERIMAGE_COUNT = 5;
+export const BULLET_AFTERIMAGE_ALPHA_DECAY = 0.2;
+
+export const SHADOW_OFFSET_TREE_ADJUSTMENT = 5;
