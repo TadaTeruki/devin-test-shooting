@@ -9,6 +9,7 @@ import {
 	PLAYER_BULLET_COLOR,
 	PLAYER_BULLET_RADIUS,
 	PLAYER_BULLET_SPEED,
+	PLAYER_BULLET_FIRE_INTERVAL,
 	READY_DISPLAY_DURATION,
 } from "../constants";
 import { Background } from "../entities/Background";
@@ -27,6 +28,7 @@ export class GameScene extends BaseScene {
 	background: Background;
 	camera: Camera;
 	lastEnemySpawnTime: number;
+	lastPlayerBulletTime: number;
 	gameState: GameState;
 	onGameOver: () => void;
 	gameStartTime: number;
@@ -43,6 +45,7 @@ export class GameScene extends BaseScene {
 		this.background = new Background();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
+		this.lastPlayerBulletTime = 0;
 		this.gameStartTime = Date.now();
 		this.gameState = GameState.Playing;
 		this.onGameOver = onGameOver;
@@ -176,6 +179,12 @@ export class GameScene extends BaseScene {
 	}
 
 	private shootPlayerBullet(): void {
+		const currentTime = Date.now();
+
+		if (currentTime - this.lastPlayerBulletTime < PLAYER_BULLET_FIRE_INTERVAL) {
+			return;
+		}
+
 		const bulletPosition: Vector2D = {
 			x: this.player.position.x,
 			y: this.player.position.y - this.player.radius,
@@ -195,6 +204,7 @@ export class GameScene extends BaseScene {
 		);
 
 		this.playerBullets.push(bullet);
+		this.lastPlayerBulletTime = currentTime;
 	}
 
 	private checkCollisions(): void {
