@@ -54,3 +54,14 @@ export const BACKGROUND_BEACH_RADIUS_FACTOR = 1.5; // 海の半径に対する�
 export const KEY_SPACE = " ";
 
 export const READY_DISPLAY_DURATION = 3; // seconds
+
+export const SCORE_PER_ENEMY = 100;
+export const SCORE_DISPLAY_FONT = "bold 24px Arial";
+export const SCORE_DISPLAY_COLOR = "#FFFFFF";
+export const SCORE_DISPLAY_X = 700;
+export const SCORE_DISPLAY_Y = 40;
+
+export const HIGH_SCORE_DISPLAY_FONT = "bold 20px Arial";
+export const HIGH_SCORE_DISPLAY_COLOR = "#FFFFFF";
+export const HIGH_SCORE_DISPLAY_X = 400;
+export const HIGH_SCORE_DISPLAY_Y = 300;
