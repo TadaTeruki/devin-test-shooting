@@ -15,7 +15,7 @@ export class TitleScene extends BaseScene {
 			width: 200,
 			height: 60,
 		};
-		
+
 		document.addEventListener("keydown", (e) => {
 			if (e.key === "Enter") {
 				console.log("Enter key pressed - starting game");
@@ -48,7 +48,7 @@ export class TitleScene extends BaseScene {
 			CANVAS_WIDTH / 2,
 			this.startButtonBounds.y + this.startButtonBounds.height / 2,
 		);
-		
+
 		console.log("Button position:", this.startButtonBounds);
 	}
 
@@ -63,17 +63,19 @@ export class TitleScene extends BaseScene {
 			x: this.startButtonBounds.x - 50,
 			y: this.startButtonBounds.y - 50,
 			width: this.startButtonBounds.width + 100,
-			height: this.startButtonBounds.height + 100
+			height: this.startButtonBounds.height + 100,
 		};
-		
-		const isInButtonX =
-			x >= expandedBounds.x &&
-			x <= expandedBounds.x + expandedBounds.width;
-		const isInButtonY =
-			y >= expandedBounds.y &&
-			y <= expandedBounds.y + expandedBounds.height;
 
-		console.log("Button bounds check:", { isInButtonX, isInButtonY, expandedBounds });
+		const isInButtonX =
+			x >= expandedBounds.x && x <= expandedBounds.x + expandedBounds.width;
+		const isInButtonY =
+			y >= expandedBounds.y && y <= expandedBounds.y + expandedBounds.height;
+
+		console.log("Button bounds check:", {
+			isInButtonX,
+			isInButtonY,
+			expandedBounds,
+		});
 
 		if (isInButtonX && isInButtonY) {
 			console.log("Start button clicked! Calling onStart...");

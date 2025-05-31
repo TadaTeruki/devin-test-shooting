@@ -15,7 +15,7 @@ export class ReadyScene extends BaseScene {
 
 	update(deltaTime: number): void {
 		this.elapsedTime += deltaTime;
-		
+
 		if (this.elapsedTime >= this.readyDuration) {
 			console.log("Ready time complete! Starting game...");
 			this.onReady();

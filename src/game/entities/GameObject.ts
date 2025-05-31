@@ -27,13 +27,20 @@ export abstract class GameObject implements IGameObject, Collidable {
 	/**
 	 * 影を描画する
 	 */
-	protected drawShadow(ctx: CanvasRenderingContext2D, position: Vector2D, background?: Background, camera?: Camera): void {
+	protected drawShadow(
+		ctx: CanvasRenderingContext2D,
+		position: Vector2D,
+		background?: Background,
+		camera?: Camera,
+	): void {
 		if (!this.hasShadow) return;
 
 		const shadowX = position.x + SHADOW_OFFSET_X;
 		const shadowY = position.y + SHADOW_OFFSET_Y;
 
-		const shadowWorldPos = camera ? camera.screenToWorld({ x: shadowX, y: shadowY }) : { x: shadowX, y: shadowY };
+		const shadowWorldPos = camera
+			? camera.screenToWorld({ x: shadowX, y: shadowY })
+			: { x: shadowX, y: shadowY };
 
 		let isOverSea = false;
 		if (background && camera) {
@@ -44,17 +51,17 @@ export abstract class GameObject implements IGameObject, Collidable {
 			ctx.save();
 			if (isOverSea) {
 				ctx.globalAlpha = 0.3;
-				ctx.filter = 'brightness(0.5)';
+				ctx.filter = "brightness(0.5)";
 			} else {
 				ctx.globalAlpha = 0.5;
-				ctx.filter = 'brightness(0)';
+				ctx.filter = "brightness(0)";
 			}
 			ctx.drawImage(
 				this.image,
 				shadowX - this.radius,
 				shadowY - this.radius,
 				this.radius * 2,
-				this.radius * 2
+				this.radius * 2,
 			);
 			ctx.restore();
 		} else {
@@ -71,7 +78,11 @@ export abstract class GameObject implements IGameObject, Collidable {
 		}
 	}
 
-	draw(ctx: CanvasRenderingContext2D, camera?: Camera, background?: Background): void {
+	draw(
+		ctx: CanvasRenderingContext2D,
+		camera?: Camera,
+		background?: Background,
+	): void {
 		if (!this.isActive) return;
 
 		this.drawShadow(ctx, this.position, background, camera);
@@ -82,7 +93,7 @@ export abstract class GameObject implements IGameObject, Collidable {
 				this.position.x - this.radius,
 				this.position.y - this.radius,
 				this.radius * 2,
-				this.radius * 2
+				this.radius * 2,
 			);
 		} else {
 			ctx.beginPath();

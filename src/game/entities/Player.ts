@@ -20,12 +20,13 @@ export class Player extends GameObject {
 		this.hasShadow = true;
 
 		const imageManager = ImageManager.getInstance();
-		imageManager.loadImage("player", PLAYER_IMAGE_PATH)
-			.then(img => {
+		imageManager
+			.loadImage("player", PLAYER_IMAGE_PATH)
+			.then((img) => {
 				this.image = img;
 				this.imageLoaded = true;
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.error("Failed to load player image:", error);
 			});
 	}

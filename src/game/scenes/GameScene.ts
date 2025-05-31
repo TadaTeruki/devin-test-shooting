@@ -58,7 +58,7 @@ export class GameScene extends BaseScene {
 				this.isReady = true;
 			}
 		}
-		
+
 		if (this.gameState !== GameState.Playing) return;
 
 		const currentTime = Date.now();
@@ -97,10 +97,10 @@ export class GameScene extends BaseScene {
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.background.draw(ctx, this.camera);
 
-		this.player.draw(ctx, this.camera, this.background);
+		this.player.draw(ctx);
 
 		for (const enemy of this.enemies) {
-			enemy.draw(ctx, this.camera, this.background);
+			enemy.draw(ctx);
 		}
 
 		for (const bullet of this.playerBullets) {
@@ -110,7 +110,7 @@ export class GameScene extends BaseScene {
 		for (const bullet of this.enemyBullets) {
 			bullet.draw(ctx);
 		}
-		
+
 		if (!this.isReady) {
 			ctx.font = "bold 48px Arial";
 			ctx.fillStyle = "#FFFFFF";
