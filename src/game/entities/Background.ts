@@ -1,5 +1,9 @@
 import type { Camera } from "../camera/Camera";
 import {
+	BACKGROUND_COLOR_GREEN,
+	BACKGROUND_COLOR_LIGHT_GREEN,
+	BACKGROUND_NOISE_SCALE_X,
+	BACKGROUND_NOISE_SCALE_Y,
 	BACKGROUND_BEACH_COLOR,
 	BACKGROUND_BEACH_RADIUS_FACTOR,
 	BACKGROUND_GRID_SPACING,
@@ -33,35 +37,91 @@ export class Background {
 	update(_deltaTime: number, _camera?: Camera): void {
 	}
 
+	draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
+		this.drawBackgroundNoise(ctx, camera);
+
+		this.drawTrees(ctx, camera);
+	}
+
+	private interpolateColor(color1: string, color2: string, t: number): string {
+		const hex1 = color1.replace('#', '');
+		const hex2 = color2.replace('#', '');
+		
+		const r1 = parseInt(hex1.substr(0, 2), 16);
+		const g1 = parseInt(hex1.substr(2, 2), 16);
+		const b1 = parseInt(hex1.substr(4, 2), 16);
+		
+		const r2 = parseInt(hex2.substr(0, 2), 16);
+		const g2 = parseInt(hex2.substr(2, 2), 16);
+		const b2 = parseInt(hex2.substr(4, 2), 16);
+		
+		const r = Math.round(r1 + (r2 - r1) * t);
+		const g = Math.round(g1 + (g2 - g1) * t);
+		const b = Math.round(b1 + (b2 - b1) * t);
+		
+		return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+	}
+
+	/**
+	 * パーリンノイズを使用した背景色を描画
+	 */
+	private drawBackgroundNoise(ctx: CanvasRenderingContext2D, camera: Camera): void {
+		const gridSize = 10; // 背景グリッドのサイズ
+
+		const topLeft = camera.screenToWorld({ x: 0, y: 0 });
+		const bottomRight = camera.screenToWorld({ x: CANVAS_WIDTH, y: CANVAS_HEIGHT });
+
+		const minGridX = Math.floor(topLeft.x / gridSize);
+		const maxGridX = Math.ceil(bottomRight.x / gridSize);
+		const minGridY = Math.floor(topLeft.y / gridSize);
+		const maxGridY = Math.ceil(bottomRight.y / gridSize);
+
+		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
+			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
+				const worldPos = { x: gridX * gridSize, y: gridY * gridSize };
+				const screenPos = camera.worldToScreen(worldPos);
+
+				const noiseValue = this.perlinNoise.noise(
+					worldPos.x * BACKGROUND_NOISE_SCALE_X, 
+					worldPos.y * BACKGROUND_NOISE_SCALE_Y
+				);
+
+				const t = (noiseValue + 1) / 2;
+				const backgroundColor = this.interpolateColor(BACKGROUND_COLOR_GREEN, BACKGROUND_COLOR_LIGHT_GREEN, t);
+
+				ctx.fillStyle = backgroundColor;
+				ctx.fillRect(screenPos.x, screenPos.y, gridSize + 1, gridSize + 1);
+			}
+		}
+	}
+
 	// 海のノイズ値と半径を計算
-	private getSeaNoiseAndRadius(gridX: number, gridY: number): { noiseValue: number; radius: number } {
-		const worldPos = { x: gridX * BACKGROUND_GRID_SPACING, y: gridY * BACKGROUND_GRID_SPACING };
-		const seaNoiseValue = this.seaPerlinNoise.noise(worldPos.x * BACKGROUND_SEA_NOISE_SCALE, worldPos.y * BACKGROUND_SEA_NOISE_SCALE);
+	private getSeaNoiseAndRadius(worldX: number, worldY: number): { noiseValue: number; radius: number } {
+		const seaNoiseValue = this.seaPerlinNoise.noise(worldX * BACKGROUND_SEA_NOISE_SCALE, worldY * BACKGROUND_SEA_NOISE_SCALE);
 		const seaRadius = BACKGROUND_SEA_RADIUS_MIN + seaNoiseValue * (BACKGROUND_SEA_RADIUS_MAX - BACKGROUND_SEA_RADIUS_MIN);
 		return { noiseValue: seaNoiseValue, radius: seaRadius };
 	}
 
 	// 木のノイズ値と半径を計算
-	private getTreeNoiseAndRadius(gridX: number, gridY: number): { noiseValue: number; radius: number } {
-		const worldPos = { x: gridX * BACKGROUND_GRID_SPACING, y: gridY * BACKGROUND_GRID_SPACING };
-		const treeNoiseValue = this.perlinNoise.noise(worldPos.x * BACKGROUND_TREE_NOISE_SCALE, worldPos.y * BACKGROUND_TREE_NOISE_SCALE);
+	private getTreeNoiseAndRadius(worldX: number, worldY: number): { noiseValue: number; radius: number } {
+		const treeNoiseValue = this.perlinNoise.noise(worldX * BACKGROUND_TREE_NOISE_SCALE, worldY * BACKGROUND_TREE_NOISE_SCALE);
 		const treeRadius = BACKGROUND_TREE_RADIUS_MIN + treeNoiseValue * (BACKGROUND_TREE_RADIUS_MAX - BACKGROUND_TREE_RADIUS_MIN);
 		return { noiseValue: treeNoiseValue, radius: treeRadius };
 	}
 
 	// 海が描画可能かどうかを判定
-	private isSeaAvailable(gridX: number, gridY: number): boolean {
-		const { radius } = this.getSeaNoiseAndRadius(gridX, gridY);
+	public isSeaAvailable(worldX: number, worldY: number): boolean {
+		const { radius } = this.getSeaNoiseAndRadius(worldX, worldY);
 		return radius > BACKGROUND_SEA_RADIUS_VISIBLE;
 	}
 
 	// 木が描画可能かどうかを判定
-	private isTreeAvailable(gridX: number, gridY: number): boolean {
-		if (this.isSeaAvailable(gridX, gridY)) {
+	private isTreeAvailable(worldX: number, worldY: number): boolean {
+		if (this.isSeaAvailable(worldX, worldY)) {
 			return false; // 海の上には木を描画しない
 		}
 
-		const { radius } = this.getTreeNoiseAndRadius(gridX, gridY);
+		const { radius } = this.getTreeNoiseAndRadius(worldX, worldY);
 		return radius > BACKGROUND_TREE_RADIUS_VISIBLE;
 	}
 
@@ -69,15 +129,15 @@ export class Background {
 	private drawBeach(ctx: CanvasRenderingContext2D, camera: Camera, minGridX: number, maxGridX: number, minGridY: number, maxGridY: number): void {
 		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
 			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
-				if (!this.isSeaAvailable(gridX, gridY)) continue;
+				const worldX = gridX * BACKGROUND_GRID_SPACING;
+				const worldY = gridY * BACKGROUND_GRID_SPACING;
 
-				const localX = gridX * BACKGROUND_GRID_SPACING;
-				const localY = gridY * BACKGROUND_GRID_SPACING;
+				if (!this.isSeaAvailable(worldX, worldY)) continue;
 
-				const { radius: seaRadius } = this.getSeaNoiseAndRadius(gridX, gridY);
+				const { radius: seaRadius } = this.getSeaNoiseAndRadius(worldX, worldY);
 				const beachRadius = seaRadius * BACKGROUND_BEACH_RADIUS_FACTOR;
 
-				const screenPos = camera.worldToScreen({ x: localX, y: localY });
+				const screenPos = camera.worldToScreen({ x: worldX, y: worldY });
 
 				if (screenPos.x >= -beachRadius && 
 					screenPos.x <= CANVAS_WIDTH + beachRadius && 
@@ -98,14 +158,14 @@ export class Background {
 	private drawSea(ctx: CanvasRenderingContext2D, camera: Camera, minGridX: number, maxGridX: number, minGridY: number, maxGridY: number): void {
 		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
 			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
-				if (!this.isSeaAvailable(gridX, gridY)) continue;
+				const worldX = gridX * BACKGROUND_GRID_SPACING;
+				const worldY = gridY * BACKGROUND_GRID_SPACING;
 
-				const localX = gridX * BACKGROUND_GRID_SPACING;
-				const localY = gridY * BACKGROUND_GRID_SPACING;
+				if (!this.isSeaAvailable(worldX, worldY)) continue;
 
-				const { radius: seaRadius } = this.getSeaNoiseAndRadius(gridX, gridY);
+				const { radius: seaRadius } = this.getSeaNoiseAndRadius(worldX, worldY);
 
-				const screenPos = camera.worldToScreen({ x: localX, y: localY });
+				const screenPos = camera.worldToScreen({ x: worldX, y: worldY });
 
 				if (screenPos.x >= -seaRadius && 
 					screenPos.x <= CANVAS_WIDTH + seaRadius && 
@@ -126,14 +186,14 @@ export class Background {
 	private drawTreeShadow(ctx: CanvasRenderingContext2D, camera: Camera, minGridX: number, maxGridX: number, minGridY: number, maxGridY: number): void {
 		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
 			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
-				if (!this.isTreeAvailable(gridX, gridY)) continue;
+				const worldX = gridX * BACKGROUND_GRID_SPACING;
+				const worldY = gridY * BACKGROUND_GRID_SPACING;
 
-				const localX = gridX * BACKGROUND_GRID_SPACING;
-				const localY = gridY * BACKGROUND_GRID_SPACING;
+				if (!this.isTreeAvailable(worldX, worldY)) continue;
 
-				const { radius: treeRadius } = this.getTreeNoiseAndRadius(gridX, gridY);
+				const { radius: treeRadius } = this.getTreeNoiseAndRadius(worldX, worldY);
 
-				const screenPos = camera.worldToScreen({ x: localX, y: localY });
+				const screenPos = camera.worldToScreen({ x: worldX, y: worldY });
 
 				if (screenPos.x >= -treeRadius && 
 					screenPos.x <= CANVAS_WIDTH + treeRadius && 
@@ -157,14 +217,14 @@ export class Background {
 	private drawTree(ctx: CanvasRenderingContext2D, camera: Camera, minGridX: number, maxGridX: number, minGridY: number, maxGridY: number): void {
 		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
 			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
-				if (!this.isTreeAvailable(gridX, gridY)) continue;
+				const worldX = gridX * BACKGROUND_GRID_SPACING;
+				const worldY = gridY * BACKGROUND_GRID_SPACING;
 
-				const localX = gridX * BACKGROUND_GRID_SPACING;
-				const localY = gridY * BACKGROUND_GRID_SPACING;
+				if (!this.isTreeAvailable(worldX, worldY)) continue;
 
-				const { radius: treeRadius } = this.getTreeNoiseAndRadius(gridX, gridY);
+				const { radius: treeRadius } = this.getTreeNoiseAndRadius(worldX, worldY);
 
-				const screenPos = camera.worldToScreen({ x: localX, y: localY });
+				const screenPos = camera.worldToScreen({ x: worldX, y: worldY });
 
 				if (screenPos.x >= -treeRadius && 
 					screenPos.x <= CANVAS_WIDTH + treeRadius && 
@@ -181,7 +241,8 @@ export class Background {
 		}
 	}
 
-	draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
+
+	private drawTrees(ctx: CanvasRenderingContext2D, camera: Camera): void {
 		const gridSpacing = BACKGROUND_GRID_SPACING;
 
 		const topLeft = camera.screenToWorld({ x: 0, y: 0 });

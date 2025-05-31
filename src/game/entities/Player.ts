@@ -3,8 +3,10 @@ import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
 	PLAYER_COLOR,
+	PLAYER_IMAGE_PATH,
 	PLAYER_RADIUS,
 } from "../constants";
+import { ImageManager } from "../utils/ImageManager";
 import { GameObject } from "./GameObject";
 
 export class Player extends GameObject {
@@ -14,6 +16,18 @@ export class Player extends GameObject {
 			PLAYER_RADIUS,
 			PLAYER_COLOR,
 		);
+
+		this.hasShadow = true;
+
+		const imageManager = ImageManager.getInstance();
+		imageManager.loadImage("player", PLAYER_IMAGE_PATH)
+			.then(img => {
+				this.image = img;
+				this.imageLoaded = true;
+			})
+			.catch(error => {
+				console.error("Failed to load player image:", error);
+			});
 	}
 
 	update(_deltaTime: number): void {}

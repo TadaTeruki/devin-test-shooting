@@ -1,8 +1,14 @@
 import { SceneManager } from "./SceneManager";
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./constants";
+import { 
+	CANVAS_HEIGHT, 
+	CANVAS_WIDTH, 
+	ENEMY_IMAGE_PATH, 
+	PLAYER_IMAGE_PATH 
+} from "./constants";
 import { GameState } from "./interfaces";
 import { GameOverScene } from "./scenes/GameOverScene";
 import { GameScene } from "./scenes/GameScene";
+import { ImageManager } from "./utils/ImageManager";
 import { TitleScene } from "./scenes/TitleScene";
 
 export class Game {
@@ -37,7 +43,19 @@ export class Game {
 		this.canvas.addEventListener("click", this.handleClick.bind(this));
 		window.addEventListener("keydown", this.handleKeyDown.bind(this));
 
+		this.preloadImages();
 		this.startFromTitle();
+	}
+
+	/**
+	 * ゲームで使用する画像をプリロード
+	 */
+	private preloadImages(): Promise<void> {
+		const imageManager = ImageManager.getInstance();
+		return imageManager.preloadImages([
+			{ key: "player", src: PLAYER_IMAGE_PATH },
+			{ key: "enemy", src: ENEMY_IMAGE_PATH }
+		]);
 	}
 
 	startGame(): void {
