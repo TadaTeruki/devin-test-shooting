@@ -40,3 +40,5 @@ export const BACKGROUND_BEACH_COLOR = "#FFD700"; // 薄橙色
 export const BACKGROUND_BEACH_RADIUS_FACTOR = 1.5; // 海の半径に対する倍率
 
 export const KEY_SPACE = " ";
+
+export const READY_DISPLAY_DURATION = 3; // seconds
