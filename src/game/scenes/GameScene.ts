@@ -121,12 +121,12 @@ export class GameScene extends BaseScene {
 	}
 
 	handleMouseMove(x: number, y: number): void {
-		if (!this.isReady || this.gameState !== GameState.Playing) return;
+		if (this.gameState !== GameState.Playing) return;
 		this.player.moveToPosition(x, y);
 	}
 
 	handleKeyDown(key: string): void {
-		if (!this.isReady || this.gameState !== GameState.Playing) return;
+		if (this.gameState !== GameState.Playing) return;
 
 		if (key === KEY_SPACE) {
 			this.shootPlayerBullet();
