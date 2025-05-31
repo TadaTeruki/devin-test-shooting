@@ -4,12 +4,14 @@ import {
 	ENEMY_BULLET_COLOR,
 	ENEMY_BULLET_RADIUS,
 	ENEMY_BULLET_SPEED,
+	ENEMY_IMAGE_PATH,
 	ENEMY_MAX_SCALE_TIME,
 	ENEMY_SHOOT_INTERVAL,
 	ENEMY_SPEED,
 } from "../constants";
 import type { Vector2D } from "../interfaces";
 import { BulletType } from "../interfaces";
+import { ImageManager } from "../utils/ImageManager";
 import { Bullet } from "./Bullet";
 import { GameObject } from "./GameObject";
 
@@ -36,6 +38,18 @@ export class Enemy extends GameObject {
 		this.lastShootTime = 0;
 		this.bullets = bullets;
 		this.gameStartTime = gameStartTime;
+		
+		this.hasShadow = true;
+
+		const imageManager = ImageManager.getInstance();
+		imageManager.loadImage("enemy", ENEMY_IMAGE_PATH)
+			.then(img => {
+				this.image = img;
+				this.imageLoaded = true;
+			})
+			.catch(error => {
+				console.error("Failed to load enemy image:", error);
+			});
 	}
 
 	update(deltaTime: number): void {
