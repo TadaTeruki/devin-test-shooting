@@ -1,11 +1,17 @@
 import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
+	HIGH_SCORE_DISPLAY_FONT,
+	HIGH_SCORE_DISPLAY_COLOR,
+	HIGH_SCORE_DISPLAY_X,
+	HIGH_SCORE_DISPLAY_Y,
 	TITLE_BACKGROUND_COLOR,
 	TITLE_PLAYER_POSITION_RATIO,
 	TITLE_UI_Y_RATIO,
 	PLAYER_IMAGE_PATH,
 } from "../constants";
+import { HighScoreManager } from "../utils/HighScoreManager";
+
 import { BaseScene } from "./BaseScene";
 
 export class TitleScene extends BaseScene {
@@ -78,6 +84,17 @@ export class TitleScene extends BaseScene {
 			"START",
 			CANVAS_WIDTH / 2,
 			this.startButtonBounds.y + this.startButtonBounds.height / 2,
+		);
+
+		const highScore = HighScoreManager.getHighScore();
+		ctx.font = HIGH_SCORE_DISPLAY_FONT;
+		ctx.fillStyle = HIGH_SCORE_DISPLAY_COLOR;
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.fillText(
+			`High Score: ${highScore.toString().padStart(6, "0")}`,
+			HIGH_SCORE_DISPLAY_X,
+			HIGH_SCORE_DISPLAY_Y,
 		);
 
 		console.log("Button position:", this.startButtonBounds);
