@@ -24,6 +24,7 @@ import {
 import type { Vector2D } from "../interfaces";
 import { BulletType, EnemyType } from "../interfaces";
 import { ImageManager } from "../utils/ImageManager";
+import { SoundManager } from "../utils/SoundManager";
 import { Bullet } from "./Bullet";
 import { GameObject } from "./GameObject";
 
@@ -158,6 +159,9 @@ export class Enemy extends GameObject {
 			bulletVelocity,
 			BulletType.Enemy,
 		);
+
+		const soundManager = SoundManager.getInstance();
+		soundManager.playSound("enemy-shoot", 0.3);
 
 		return bullet;
 	}

@@ -20,6 +20,7 @@ import {
 } from "../constants";
 import { Background } from "../entities/Background";
 import { HighScoreManager } from "../utils/HighScoreManager";
+import { SoundManager } from "../utils/SoundManager";
 
 import { BaseScene } from "./BaseScene";
 
@@ -155,6 +156,8 @@ export class TitleScene extends BaseScene {
 
 		if (isInButtonX && isInButtonY) {
 			console.log("Start button clicked! Calling onStart...");
+			const soundManager = SoundManager.getInstance();
+			soundManager.playSound("button-click", 0.3);
 			this.onStart();
 		} else {
 			console.log("Click outside button bounds");
