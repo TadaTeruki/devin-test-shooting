@@ -52,6 +52,7 @@ import {
 	SPECIAL_GAUGE_BG_COLOR,
 	SPECIAL_GAUGE_FILL_COLOR,
 	SPECIAL_GAUGE_FLASH_COLOR,
+	SPECIAL_BULLET_DAMAGE,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
@@ -88,6 +89,7 @@ export class GameScene extends BaseScene {
 	specialAttackReady: boolean;
 	specialAttackFlashTimer: number;
 	specialBullets: SpecialBullet[];
+	specialAttackKillCount: number;
 	isGameOverOverlayVisible: boolean;
 	gameOverReplayButtonBounds: { x: number; y: number; width: number; height: number };
 
@@ -115,6 +117,7 @@ export class GameScene extends BaseScene {
 		this.specialAttackReady = false;
 		this.specialAttackFlashTimer = 0;
 		this.specialBullets = [];
+		this.specialAttackKillCount = 0;
 		this.isGameOverOverlayVisible = false;
 		this.gameOverReplayButtonBounds = {
 			x: CANVAS_WIDTH / 2 - 100,
@@ -463,11 +466,18 @@ export class GameScene extends BaseScene {
 
 				if (bullet.isColliding(enemy)) {
 					bullet.isActive = false;
-					const isDestroyed = enemy.takeDamage();
+					const isDestroyed = enemy.takeDamage(SPECIAL_BULLET_DAMAGE);
 					if (isDestroyed) {
 						this.spawnExplosionParticles(enemy.position);
 						enemy.isActive = false;
-						this.score += SCORE_PER_ENEMY;
+						
+						this.specialAttackKillCount++;
+						const baseScore = enemy.enemyType === EnemyType.Heavy ? SCORE_PER_HEAVY_ENEMY : SCORE_PER_ENEMY;
+						const bonusScore = this.specialAttackKillCount * 100;
+						const totalScore = baseScore + bonusScore;
+						
+						this.score += totalScore;
+						this.spawnScoreText(enemy.position, totalScore);
 					}
 					break;
 				}
@@ -594,6 +604,7 @@ export class GameScene extends BaseScene {
 		this.specialAttackReady = false;
 		this.specialAttackChargeTime = 0;
 		this.specialAttackFlashTimer = 0;
+		this.specialAttackKillCount = 0;
 
 		const soundManager = SoundManager.getInstance();
 		soundManager.playSound("special-attack", 0.3);
@@ -684,5 +695,6 @@ export class GameScene extends BaseScene {
 		this.specialAttackChargeTime = 0;
 		this.specialAttackReady = false;
 		this.specialAttackFlashTimer = 0;
+		this.specialAttackKillCount = 0;
 	}
 }
