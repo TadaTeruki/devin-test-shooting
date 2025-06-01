@@ -1,5 +1,6 @@
 import { Camera } from "../camera/Camera";
 import { HighScoreManager } from "../utils/HighScoreManager";
+import { SoundManager } from "../utils/SoundManager";
 import {
 	CANVAS_WIDTH,
 	CANVAS_HEIGHT,
@@ -366,6 +367,9 @@ export class GameScene extends BaseScene {
 			enemyType,
 		);
 		this.enemies.push(enemy);
+		
+		const soundManager = SoundManager.getInstance();
+		soundManager.playSound("enemy-spawn", 0.1);
 	}
 
 	private shootPlayerBullet(): void {
@@ -399,6 +403,9 @@ export class GameScene extends BaseScene {
 
 		this.playerBullets.push(bullet);
 		this.lastPlayerBulletTime = currentTime;
+		
+		const soundManager = SoundManager.getInstance();
+		soundManager.playSound("player-shoot", 0.1);
 	}
 
 	private checkCollisions(): void {
@@ -524,6 +531,10 @@ export class GameScene extends BaseScene {
 	}
 
 	private spawnExplosionParticles(position: Vector2D): void {
+		if (this.gameState !== GameState.Playing) {
+			return;
+		}
+
 		const particleCount = PARTICLE_COUNT_MIN + 
 			Math.floor(Math.random() * (PARTICLE_COUNT_MAX - PARTICLE_COUNT_MIN + 1));
 
@@ -548,6 +559,9 @@ export class GameScene extends BaseScene {
 
 			this.particles.push(particle);
 		}
+
+		const soundManager = SoundManager.getInstance();
+		soundManager.playSound("explosion", 0.1);
 	}
 
 	private spawnScoreText(position: Vector2D, score: number): void {
@@ -642,6 +656,12 @@ export class GameScene extends BaseScene {
 		HighScoreManager.setHighScore(this.score);
 		this.gameState = GameState.GameOver;
 		this.isGameOverOverlayVisible = true;
+		
+		this.player.position.x = -10000;
+		this.player.position.y = -10000;
+		
+		const soundManager = SoundManager.getInstance();
+		soundManager.playSound("player-damage", 0.1);
 	}
 
 	private resetGameState(): void {

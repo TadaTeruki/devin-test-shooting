@@ -12,6 +12,7 @@ import { GameState } from "./interfaces";
 import { GameScene } from "./scenes/GameScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { ImageManager } from "./utils/ImageManager";
+import { SoundManager } from "./utils/SoundManager";
 
 export class Game {
 	canvas: HTMLCanvasElement;
@@ -46,6 +47,7 @@ export class Game {
 		window.addEventListener("keydown", this.handleKeyDown.bind(this));
 
 		this.preloadImages();
+		this.preloadSounds();
 		this.startFromTitle();
 	}
 
@@ -60,6 +62,14 @@ export class Game {
 			{ key: "enemy-fast", src: ENEMY_FAST_IMAGE_PATH },
 			{ key: "enemy-heavy", src: ENEMY_HEAVY_IMAGE_PATH },
 		]);
+	}
+
+	/**
+	 * ゲームで使用する効果音をプリロード
+	 */
+	private async preloadSounds(): Promise<void> {
+		const soundManager = SoundManager.getInstance();
+		await soundManager.loadSounds();
 	}
 
 	startGame(): void {
