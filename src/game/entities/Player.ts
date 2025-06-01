@@ -5,9 +5,17 @@ import {
 	PLAYER_COLOR,
 	PLAYER_IMAGE_PATH,
 	PLAYER_RADIUS,
+<<<<<<< HEAD
 	INITIAL_LIVES,
 	PLAYER_RESPAWN_TIME,
 	PLAYER_INVINCIBILITY_TIME,
+||||||| b70dab2
+=======
+	INITIAL_LIVES,
+	PLAYER_RESPAWN_TIME,
+	PLAYER_INVINCIBILITY_TIME,
+	PLAYER_BLINK_INTERVAL,
+>>>>>>> origin/main
 } from "../constants";
 import { ImageManager } from "../utils/ImageManager";
 import { GameObject } from "./GameObject";
@@ -49,6 +57,7 @@ export class Player extends GameObject {
 			});
 	}
 
+<<<<<<< HEAD
 	update(deltaTime: number): void {
 		if (this.respawnTimer > 0) {
 			this.respawnTimer -= deltaTime * 1000;
@@ -78,6 +87,38 @@ export class Player extends GameObject {
 			this.color = shouldShow ? this.originalColor : "transparent";
 		}
 	}
+||||||| b70dab2
+	update(_deltaTime: number): void {}
+=======
+	update(deltaTime: number): void {
+		if (this.respawnTimer > 0) {
+			this.respawnTimer -= deltaTime * 1000;
+			if (this.respawnTimer <= 0) {
+				this.respawnTimer = 0;
+				this.isInvincible = true;
+				this.invincibilityTimer = PLAYER_INVINCIBILITY_TIME;
+				this.isBlinking = true;
+				this.blinkTimer = 0;
+			}
+		}
+
+		if (this.invincibilityTimer > 0) {
+			this.invincibilityTimer -= deltaTime * 1000;
+			if (this.invincibilityTimer <= 0) {
+				this.invincibilityTimer = 0;
+				this.isInvincible = false;
+				this.isBlinking = false;
+				this.color = this.originalColor;
+			}
+		}
+
+		if (this.isBlinking) {
+			this.blinkTimer += deltaTime * 1000;
+			const shouldShow = Math.floor(this.blinkTimer / PLAYER_BLINK_INTERVAL) % 2 === 0;
+			this.color = shouldShow ? this.originalColor : "transparent";
+		}
+	}
+>>>>>>> origin/main
 
 	moveToPosition(x: number, y: number, camera?: Camera): void {
 		const worldPos = camera ? camera.screenToWorld({ x, y }) : { x, y };
