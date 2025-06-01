@@ -134,3 +134,14 @@ export const PLAYER_BLINK_INTERVAL = 10;
 export const LIVES_DISPLAY_X = 40;
 export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
+
+export const CLOUD_SCROLL_SPEED = 350;
+export const CLOUD_COLOR_LIGHT = "#FFFFFF";
+export const CLOUD_COLOR_DARK = "#E8E8E8";
+export const CLOUD_OPACITY = 0.7;
+export const CLOUD_NOISE_SCALE = 0.001;
+export const CLOUD_NOISE_THRESHOLD = 0.6;
+export const CLOUD_RADIUS_MIN = 15;
+export const CLOUD_RADIUS_MAX = 40;
+export const CLOUD_RADIUS_VISIBLE = 20;
+export const CLOUD_GRID_SPACING = 25.0;
