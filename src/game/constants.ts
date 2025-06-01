@@ -67,7 +67,7 @@ export const PLAYER_BULLET_FIRE_INTERVAL = 200; // 200ms
 export const TITLE_BACKGROUND_COLOR = "#2E3440";
 export const GAMEOVER_BACKGROUND_COLOR = "#3B4252";
 export const TITLE_PLAYER_POSITION_RATIO = 0.3;
-export const TITLE_UI_Y_RATIO = 0.7;
+export const TITLE_UI_Y_RATIO = 0.5;
 
 export const HIGH_SCORE_DISPLAY_FONT = "bold 20px Arial";
 export const HIGH_SCORE_DISPLAY_COLOR = "#FFFFFF";
