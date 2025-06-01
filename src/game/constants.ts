@@ -65,6 +65,19 @@ export const ENEMY_HEAVY_HEALTH = 5;
 
 export const ENEMY_FAST_IMAGE_PATH = "/assets/enemy-purple.png";
 export const ENEMY_HEAVY_IMAGE_PATH = "/assets/enemy-gray.png";
+
+export const ENEMY_HEAVY_BULLET_COLOR = "#8A2BE2";
+export const ENEMY_DAMAGE_FLASH_DURATION = 150;
+export const ENEMY_DAMAGE_FLASH_COLOR = "#FFFFFF";
+
+export const PARTICLE_LIFETIME = 1000;
+export const PARTICLE_COUNT_MIN = 5;
+export const PARTICLE_COUNT_MAX = 8;
+export const PARTICLE_SPEED_MIN = 50;
+export const PARTICLE_SPEED_MAX = 150;
+export const PARTICLE_RADIUS_MIN = 3;
+export const PARTICLE_RADIUS_MAX = 8;
+export const PARTICLE_COLORS = ["#FFFFFF", "#FFFF00", "#FF0000", "#FFA500"];
 export const BACKGROUND_SEA_COLOR = "#2277CC"; // 青
 export const BACKGROUND_SEA_RADIUS_MIN = 0;
 export const BACKGROUND_SEA_RADIUS_VISIBLE = 40;

@@ -24,10 +24,19 @@ import {
 	HIGH_SCORE_DISPLAY_FONT,
 	HIGH_SCORE_DISPLAY_COLOR,
 	VIEWPORT_CENTER_Y,
+	PARTICLE_LIFETIME,
+	PARTICLE_COUNT_MIN,
+	PARTICLE_COUNT_MAX,
+	PARTICLE_SPEED_MIN,
+	PARTICLE_SPEED_MAX,
+	PARTICLE_RADIUS_MIN,
+	PARTICLE_RADIUS_MAX,
+	PARTICLE_COLORS,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
 import { Enemy } from "../entities/Enemy";
+import { Particle } from "../entities/Particle";
 import { Player } from "../entities/Player";
 import { BulletType, GameState, EnemyType } from "../interfaces";
 import type { Vector2D } from "../interfaces";
@@ -38,6 +47,7 @@ export class GameScene extends BaseScene {
 	enemies: Enemy[];
 	playerBullets: Bullet[];
 	enemyBullets: Bullet[];
+	particles: Particle[];
 	background: Background;
 	camera: Camera;
 	lastEnemySpawnTime: number;
@@ -56,6 +66,7 @@ export class GameScene extends BaseScene {
 		this.enemies = [];
 		this.playerBullets = [];
 		this.enemyBullets = [];
+		this.particles = [];
 		this.background = new Background();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
@@ -107,6 +118,10 @@ export class GameScene extends BaseScene {
 			bullet.update(deltaTime);
 		}
 
+		for (const particle of this.particles) {
+			particle.update(deltaTime);
+		}
+
 		this.checkCollisions();
 
 		this.cleanupInactiveObjects();
@@ -127,6 +142,10 @@ export class GameScene extends BaseScene {
 
 		for (const bullet of this.enemyBullets) {
 			bullet.draw(ctx);
+		}
+
+		for (const particle of this.particles) {
+			particle.draw(ctx);
 		}
 
 		ctx.font = SCORE_DISPLAY_FONT;
@@ -260,6 +279,7 @@ export class GameScene extends BaseScene {
 					bullet.isActive = false;
 					const isDestroyed = enemy.takeDamage();
 					if (isDestroyed) {
+						this.spawnExplosionParticles(enemy.position);
 						enemy.isActive = false;
 						this.score += SCORE_PER_ENEMY;
 					}
@@ -273,6 +293,7 @@ export class GameScene extends BaseScene {
 		this.enemies = this.enemies.filter((enemy) => enemy.isActive);
 		this.playerBullets = this.playerBullets.filter((bullet) => bullet.isActive);
 		this.enemyBullets = this.enemyBullets.filter((bullet) => bullet.isActive);
+		this.particles = this.particles.filter((particle) => particle.isActive);
 	}
 
 	private getRandomEnemyType(): EnemyType {
@@ -303,6 +324,33 @@ export class GameScene extends BaseScene {
 			case EnemyType.Fast: return ENEMY_FAST_COLOR;
 			case EnemyType.Heavy: return ENEMY_HEAVY_COLOR;
 			default: return ENEMY_NORMAL_COLOR;
+		}
+	}
+
+	private spawnExplosionParticles(position: Vector2D): void {
+		const particleCount = PARTICLE_COUNT_MIN + 
+			Math.floor(Math.random() * (PARTICLE_COUNT_MAX - PARTICLE_COUNT_MIN + 1));
+
+		for (let i = 0; i < particleCount; i++) {
+			const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.5;
+			const speed = PARTICLE_SPEED_MIN + Math.random() * (PARTICLE_SPEED_MAX - PARTICLE_SPEED_MIN);
+			const radius = PARTICLE_RADIUS_MIN + Math.random() * (PARTICLE_RADIUS_MAX - PARTICLE_RADIUS_MIN);
+			const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+
+			const velocity: Vector2D = {
+				x: Math.cos(angle) * speed,
+				y: Math.sin(angle) * speed,
+			};
+
+			const particle = new Particle(
+				{ x: position.x, y: position.y },
+				radius,
+				color,
+				velocity,
+				PARTICLE_LIFETIME,
+			);
+
+			this.particles.push(particle);
 		}
 	}
 
