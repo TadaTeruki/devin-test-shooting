@@ -2,11 +2,12 @@ import { Bullet } from "./Bullet";
 import { Enemy } from "./Enemy";
 import { BulletType } from "../interfaces";
 import type { Vector2D } from "../interfaces";
-import { SPECIAL_BULLET_HOMING_RATIO } from "../constants";
+import { SPECIAL_BULLET_HOMING_RATIO_INITIAL, SPECIAL_BULLET_HOMING_RATIO_FINAL, SPECIAL_BULLET_HOMING_DURATION } from "../constants";
 
 export class SpecialBullet extends Bullet {
 	targetEnemy: Enemy | null;
 	enemies: Enemy[];
+	creationTime: number;
 
 	constructor(
 		position: Vector2D,
@@ -18,6 +19,7 @@ export class SpecialBullet extends Bullet {
 		super(position, radius, color, velocity, BulletType.Special);
 		this.enemies = enemies;
 		this.targetEnemy = this.findNearestEnemy();
+		this.creationTime = Date.now();
 	}
 
 	update(deltaTime: number): void {
@@ -28,6 +30,11 @@ export class SpecialBullet extends Bullet {
 		}
 
 		if (this.targetEnemy) {
+			const elapsedTime = Date.now() - this.creationTime;
+			const progress = Math.min(elapsedTime / SPECIAL_BULLET_HOMING_DURATION, 1.0);
+			const currentHomingRatio = SPECIAL_BULLET_HOMING_RATIO_INITIAL + 
+				(SPECIAL_BULLET_HOMING_RATIO_FINAL - SPECIAL_BULLET_HOMING_RATIO_INITIAL) * progress;
+
 			const dx = this.targetEnemy.position.x - this.position.x;
 			const dy = this.targetEnemy.position.y - this.position.y;
 			const targetAngle = Math.atan2(dy, dx);
@@ -37,7 +44,7 @@ export class SpecialBullet extends Bullet {
 			while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
 			while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
 			
-			const correctionAngle = currentAngle + angleDiff * SPECIAL_BULLET_HOMING_RATIO;
+			const correctionAngle = currentAngle + angleDiff * currentHomingRatio;
 			const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
 			
 			this.velocity.x = Math.cos(correctionAngle) * speed;
