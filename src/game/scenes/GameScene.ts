@@ -2,7 +2,7 @@ import { Camera } from "../camera/Camera";
 import { HighScoreManager } from "../utils/HighScoreManager";
 import {
 	CANVAS_WIDTH,
-
+	CANVAS_HEIGHT,
 	ENEMY_SPAWN_INTERVAL,
 	ENEMY_NORMAL_COLOR,
 	ENEMY_FAST_COLOR,
@@ -25,6 +25,10 @@ import {
 	HIGH_SCORE_DISPLAY_FONT,
 	HIGH_SCORE_DISPLAY_COLOR,
 	VIEWPORT_CENTER_Y,
+	GAMEOVER_TEXT_Y,
+	GAMEOVER_BUTTON_Y,
+	GAMEOVER_HIGH_SCORE_DISPLAY_X,
+	GAMEOVER_HIGH_SCORE_DISPLAY_Y,
 	PARTICLE_LIFETIME,
 	PARTICLE_COUNT_MIN,
 	PARTICLE_COUNT_MAX,
@@ -39,6 +43,7 @@ import {
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
+import { Cloud } from "../entities/Cloud";
 import { Enemy } from "../entities/Enemy";
 import { Particle } from "../entities/Particle";
 import { Player } from "../entities/Player";
@@ -55,6 +60,7 @@ export class GameScene extends BaseScene {
 	particles: Particle[];
 	scoreTexts: ScoreText[];
 	background: Background;
+	cloud: Cloud;
 	camera: Camera;
 	lastEnemySpawnTime: number;
 	score: number;
@@ -65,6 +71,8 @@ export class GameScene extends BaseScene {
 	isReady: boolean;
 	readyElapsedTime: number;
 	readyDuration: number;
+	isGameOverOverlayVisible: boolean;
+	gameOverReplayButtonBounds: { x: number; y: number; width: number; height: number };
 
 	constructor(onGameOver: () => void) {
 		super();
@@ -75,6 +83,7 @@ export class GameScene extends BaseScene {
 		this.particles = [];
 		this.scoreTexts = [];
 		this.background = new Background();
+		this.cloud = new Cloud();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
 		this.score = 0;
@@ -85,6 +94,13 @@ export class GameScene extends BaseScene {
 		this.isReady = false;
 		this.readyElapsedTime = 0;
 		this.readyDuration = READY_DISPLAY_DURATION;
+		this.isGameOverOverlayVisible = false;
+		this.gameOverReplayButtonBounds = {
+			x: CANVAS_WIDTH / 2 - 100,
+			y: GAMEOVER_BUTTON_Y,
+			width: 200,
+			height: 60,
+		};
 	}
 
 	update(deltaTime: number): void {
@@ -95,12 +111,11 @@ export class GameScene extends BaseScene {
 			}
 		}
 
-		if (this.gameState !== GameState.Playing) return;
-
 		const currentTime = Date.now();
 
 		this.camera.update(deltaTime);
 		this.background.update(deltaTime, this.camera);
+		this.cloud.update(deltaTime);
 
 		this.player.update(deltaTime);
 
@@ -111,9 +126,11 @@ export class GameScene extends BaseScene {
 
 		for (const enemy of this.enemies) {
 			enemy.update(deltaTime);
-			const bullet = enemy.shoot(this.player.position, currentTime);
-			if (bullet) {
-				this.enemyBullets.push(bullet);
+			if (this.gameState === GameState.Playing) {
+				const bullet = enemy.shoot(this.player.position, currentTime);
+				if (bullet) {
+					this.enemyBullets.push(bullet);
+				}
 			}
 		}
 
@@ -141,7 +158,7 @@ export class GameScene extends BaseScene {
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.background.draw(ctx, this.camera);
 
-		if (this.player.shouldRender()) {
+		if (this.player.shouldRender() && !this.isGameOverOverlayVisible) {
 			this.player.draw(ctx, this.camera, this.background);
 		}
 
@@ -165,6 +182,7 @@ export class GameScene extends BaseScene {
 			scoreText.draw(ctx);
 		}
 
+		this.cloud.draw(ctx, this.camera);
 		this.drawLives(ctx);
 
 		ctx.font = SCORE_DISPLAY_FONT;
@@ -195,22 +213,73 @@ export class GameScene extends BaseScene {
 			ctx.textBaseline = "middle";
 			ctx.fillText("READY?", CANVAS_WIDTH / 2, VIEWPORT_CENTER_Y);
 		}
+
+		if (this.isGameOverOverlayVisible) {
+			ctx.fillStyle = "rgba(59, 66, 82, 0.7)";
+			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+			ctx.font = "bold 48px Arial";
+			ctx.fillStyle = "#FFFFFF";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText("GAME OVER", CANVAS_WIDTH / 2, GAMEOVER_TEXT_Y);
+
+			ctx.fillStyle = "#4CAF50";
+			ctx.fillRect(
+				this.gameOverReplayButtonBounds.x,
+				this.gameOverReplayButtonBounds.y,
+				this.gameOverReplayButtonBounds.width,
+				this.gameOverReplayButtonBounds.height,
+			);
+
+			ctx.font = "bold 24px Arial";
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillText(
+				"REPLAY",
+				CANVAS_WIDTH / 2,
+				this.gameOverReplayButtonBounds.y + this.gameOverReplayButtonBounds.height / 2,
+			);
+
+			const highScore = HighScoreManager.getHighScore();
+			ctx.font = HIGH_SCORE_DISPLAY_FONT;
+			ctx.fillStyle = HIGH_SCORE_DISPLAY_COLOR;
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText(
+				`High Score: ${highScore.toString().padStart(6, "0")}`,
+				GAMEOVER_HIGH_SCORE_DISPLAY_X,
+				GAMEOVER_HIGH_SCORE_DISPLAY_Y,
+			);
+		}
 	}
 
 	handleMouseMove(x: number, y: number): void {
-		if (this.gameState !== GameState.Playing) return;
+		if (this.gameState !== GameState.Playing || this.isGameOverOverlayVisible) return;
 		this.player.moveToPosition(x, y);
 	}
 
 	handleKeyDown(key: string): void {
-		if (this.gameState !== GameState.Playing) return;
+		if (this.gameState !== GameState.Playing || this.isGameOverOverlayVisible) return;
 
 		if (key === KEY_SPACE) {
 			this.shootPlayerBullet();
 		}
 	}
 
-	handleClick(_x: number, _y: number): void {}
+	handleClick(x: number, y: number): void {
+		if (this.isGameOverOverlayVisible) {
+			const isInButtonX =
+				x >= this.gameOverReplayButtonBounds.x &&
+				x <= this.gameOverReplayButtonBounds.x + this.gameOverReplayButtonBounds.width;
+			const isInButtonY =
+				y >= this.gameOverReplayButtonBounds.y &&
+				y <= this.gameOverReplayButtonBounds.y + this.gameOverReplayButtonBounds.height;
+
+			if (isInButtonX && isInButtonY) {
+				this.resetGameState();
+			}
+		}
+	}
 
 	private getDifficultyScale(currentTime: number): number {
 		const elapsedSeconds = (currentTime - this.gameStartTime) / 1000;
@@ -428,6 +497,22 @@ export class GameScene extends BaseScene {
 	private gameOver(): void {
 		HighScoreManager.setHighScore(this.score);
 		this.gameState = GameState.GameOver;
-		this.onGameOver();
+		this.isGameOverOverlayVisible = true;
+	}
+
+	private resetGameState(): void {
+		this.enemies = [];
+		this.playerBullets = [];
+		this.enemyBullets = [];
+		this.particles = [];
+		this.player = new Player();
+		this.score = 0;
+		this.lastEnemySpawnTime = 0;
+		this.lastPlayerBulletTime = 0;
+		this.gameStartTime = Date.now();
+		this.gameState = GameState.Playing;
+		this.isGameOverOverlayVisible = false;
+		this.isReady = false;
+		this.readyElapsedTime = 0;
 	}
 }
