@@ -38,6 +38,7 @@ import {
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
+import { Cloud } from "../entities/Cloud";
 import { Enemy } from "../entities/Enemy";
 import { Particle } from "../entities/Particle";
 import { Player } from "../entities/Player";
@@ -52,6 +53,7 @@ export class GameScene extends BaseScene {
 	enemyBullets: Bullet[];
 	particles: Particle[];
 	background: Background;
+	cloud: Cloud;
 	camera: Camera;
 	lastEnemySpawnTime: number;
 	score: number;
@@ -71,6 +73,7 @@ export class GameScene extends BaseScene {
 		this.enemyBullets = [];
 		this.particles = [];
 		this.background = new Background();
+		this.cloud = new Cloud();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
 		this.score = 0;
@@ -97,6 +100,7 @@ export class GameScene extends BaseScene {
 
 		this.camera.update(deltaTime);
 		this.background.update(deltaTime, this.camera);
+		this.cloud.update(deltaTime);
 
 		this.player.update(deltaTime);
 
@@ -152,6 +156,8 @@ export class GameScene extends BaseScene {
 		for (const particle of this.particles) {
 			particle.draw(ctx);
 		}
+
+		this.cloud.draw(ctx, this.camera);
 
 		this.drawLives(ctx);
 
