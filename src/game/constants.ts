@@ -103,6 +103,7 @@ export const KEY_SPACE = " ";
 export const READY_DISPLAY_DURATION = 3; // seconds
 
 export const SCORE_PER_ENEMY = 100;
+export const SCORE_PER_HEAVY_ENEMY = 500;
 export const SCORE_DISPLAY_FONT = "bold 24px Arial";
 export const SCORE_DISPLAY_COLOR = "#FFFFFF";
 export const SCORE_DISPLAY_X = 700;
