@@ -73,6 +73,14 @@ export const ENEMY_HEAVY_HEALTH = 5;
 export const ENEMY_FAST_IMAGE_PATH = "/assets/enemy-purple.png";
 export const ENEMY_HEAVY_IMAGE_PATH = "/assets/enemy-gray.png";
 
+export const PLAYER_SHOOT_SOUND_PATH = "/sounds/8bit_shoot1.mp3";
+export const ENEMY_SHOOT_SOUND_PATH = "/sounds/8bit_laser1.mp3";
+export const EXPLOSION_SOUND_PATH = "/sounds/game_explosion1.mp3";
+export const PLAYER_DAMAGE_SOUND_PATH = "/sounds/game_explosion2.mp3";
+export const ENEMY_SPAWN_SOUND_PATH = "/sounds/8bit_laser2.mp3";
+export const BUTTON_CLICK_SOUND_PATH = "/sounds/button01a.mp3";
+export const BUTTON_SELECT_SOUND_PATH = "/sounds/select01.mp3";
+
 export const ENEMY_HEAVY_BULLET_COLOR = "#8A2BE2";
 export const ENEMY_DAMAGE_FLASH_DURATION = 150;
 export const ENEMY_DAMAGE_FLASH_COLOR = "#FFFFFF";
@@ -103,7 +111,7 @@ export const KEY_SPACE = " ";
 export const READY_DISPLAY_DURATION = 3; // seconds
 
 export const SCORE_PER_ENEMY = 100;
-export const SCORE_PER_HEAVY_ENEMY = 500;
+export const SCORE_PER_HEAVY_ENEMY = 300;
 export const SCORE_DISPLAY_FONT = "bold 24px Arial";
 export const SCORE_DISPLAY_COLOR = "#FFFFFF";
 export const SCORE_DISPLAY_X = 700;

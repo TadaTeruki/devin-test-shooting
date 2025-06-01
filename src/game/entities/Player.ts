@@ -11,6 +11,7 @@ import {
 	PLAYER_BLINK_INTERVAL,
 } from "../constants";
 import { ImageManager } from "../utils/ImageManager";
+import { SoundManager } from "../utils/SoundManager";
 import { GameObject } from "./GameObject";
 
 export class Player extends GameObject {
@@ -97,6 +98,9 @@ export class Player extends GameObject {
 		}
 
 		this.lives--;
+		
+		const soundManager = SoundManager.getInstance();
+		soundManager.playSound("player-damage", 0.7);
 		
 		if (this.lives > 0) {
 			this.respawnTimer = PLAYER_RESPAWN_TIME;

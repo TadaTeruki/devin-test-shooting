@@ -6,12 +6,20 @@ import {
 	ENEMY_FAST_IMAGE_PATH,
 	ENEMY_HEAVY_IMAGE_PATH,
 	PLAYER_IMAGE_PATH,
+	PLAYER_SHOOT_SOUND_PATH,
+	ENEMY_SHOOT_SOUND_PATH,
+	EXPLOSION_SOUND_PATH,
+	PLAYER_DAMAGE_SOUND_PATH,
+	ENEMY_SPAWN_SOUND_PATH,
+	BUTTON_CLICK_SOUND_PATH,
+	BUTTON_SELECT_SOUND_PATH,
 } from "./constants";
 import { GameState } from "./interfaces";
 
 import { GameScene } from "./scenes/GameScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { ImageManager } from "./utils/ImageManager";
+import { SoundManager } from "./utils/SoundManager";
 
 export class Game {
 	canvas: HTMLCanvasElement;
@@ -46,6 +54,7 @@ export class Game {
 		window.addEventListener("keydown", this.handleKeyDown.bind(this));
 
 		this.preloadImages();
+		this.preloadSounds();
 		this.startFromTitle();
 	}
 
@@ -59,6 +68,19 @@ export class Game {
 			{ key: "enemy", src: ENEMY_IMAGE_PATH },
 			{ key: "enemy-fast", src: ENEMY_FAST_IMAGE_PATH },
 			{ key: "enemy-heavy", src: ENEMY_HEAVY_IMAGE_PATH },
+		]);
+	}
+
+	private preloadSounds(): Promise<void> {
+		const soundManager = SoundManager.getInstance();
+		return soundManager.preloadSounds([
+			{ key: "player-shoot", src: PLAYER_SHOOT_SOUND_PATH },
+			{ key: "enemy-shoot", src: ENEMY_SHOOT_SOUND_PATH },
+			{ key: "explosion", src: EXPLOSION_SOUND_PATH },
+			{ key: "player-damage", src: PLAYER_DAMAGE_SOUND_PATH },
+			{ key: "enemy-spawn", src: ENEMY_SPAWN_SOUND_PATH },
+			{ key: "button-click", src: BUTTON_CLICK_SOUND_PATH },
+			{ key: "button-select", src: BUTTON_SELECT_SOUND_PATH },
 		]);
 	}
 
