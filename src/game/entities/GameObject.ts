@@ -96,11 +96,13 @@ export abstract class GameObject implements IGameObject, Collidable {
 				this.radius * 2,
 			);
 		} else {
-			ctx.beginPath();
-			ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-			ctx.fillStyle = this.color;
-			ctx.fill();
-			ctx.closePath();
+			if (this.color !== "transparent") {
+				ctx.beginPath();
+				ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+				ctx.fillStyle = this.color;
+				ctx.fill();
+				ctx.closePath();
+			}
 		}
 	}
 

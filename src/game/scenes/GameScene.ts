@@ -32,6 +32,9 @@ import {
 	PARTICLE_RADIUS_MIN,
 	PARTICLE_RADIUS_MAX,
 	PARTICLE_COLORS,
+	LIVES_DISPLAY_X,
+	LIVES_DISPLAY_Y,
+	LIVES_DISPLAY_SPACING,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
@@ -130,7 +133,9 @@ export class GameScene extends BaseScene {
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.background.draw(ctx, this.camera);
 
-		this.player.draw(ctx, this.camera, this.background);
+		if (this.player.shouldRender()) {
+			this.player.draw(ctx, this.camera, this.background);
+		}
 
 		for (const enemy of this.enemies) {
 			enemy.draw(ctx, this.camera, this.background);
@@ -147,6 +152,8 @@ export class GameScene extends BaseScene {
 		for (const particle of this.particles) {
 			particle.draw(ctx);
 		}
+
+		this.drawLives(ctx);
 
 		ctx.font = SCORE_DISPLAY_FONT;
 		ctx.fillStyle = SCORE_DISPLAY_COLOR;
@@ -255,17 +262,28 @@ export class GameScene extends BaseScene {
 	}
 
 	private checkCollisions(): void {
-		for (const enemy of this.enemies) {
-			if (enemy.isActive && this.player.isColliding(enemy)) {
-				this.gameOver();
-				return;
+		if (this.player.canCollide()) {
+			for (const enemy of this.enemies) {
+				if (enemy.isActive && this.player.isColliding(enemy)) {
+					this.spawnExplosionParticles(this.player.position);
+					const isGameOver = this.player.takeDamage();
+					if (isGameOver) {
+						this.gameOver();
+					}
+					return;
+				}
 			}
-		}
 
-		for (const bullet of this.enemyBullets) {
-			if (bullet.isActive && this.player.isColliding(bullet)) {
-				this.gameOver();
-				return;
+			for (const bullet of this.enemyBullets) {
+				if (bullet.isActive && this.player.isColliding(bullet)) {
+					this.spawnExplosionParticles(this.player.position);
+					bullet.isActive = false;
+					const isGameOver = this.player.takeDamage();
+					if (isGameOver) {
+						this.gameOver();
+					}
+					return;
+				}
 			}
 		}
 
@@ -351,6 +369,29 @@ export class GameScene extends BaseScene {
 			);
 
 			this.particles.push(particle);
+		}
+	}
+
+	private drawLives(ctx: CanvasRenderingContext2D): void {
+		for (let i = 0; i < this.player.lives; i++) {
+			const x = LIVES_DISPLAY_X + i * LIVES_DISPLAY_SPACING;
+			const y = LIVES_DISPLAY_Y;
+			
+			if (this.player.image && this.player.imageLoaded) {
+				ctx.drawImage(
+					this.player.image,
+					x - this.player.radius,
+					y - this.player.radius,
+					this.player.radius * 2,
+					this.player.radius * 2,
+				);
+			} else {
+				ctx.beginPath();
+				ctx.arc(x, y, this.player.radius, 0, Math.PI * 2);
+				ctx.fillStyle = this.player.originalColor;
+				ctx.fill();
+				ctx.closePath();
+			}
 		}
 	}
 
