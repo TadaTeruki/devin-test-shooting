@@ -54,3 +54,8 @@ export const BACKGROUND_BEACH_RADIUS_FACTOR = 1.5; // 海の半径に対する�
 export const KEY_SPACE = " ";
 
 export const READY_DISPLAY_DURATION = 3; // seconds
+
+export const TITLE_BACKGROUND_COLOR = "#2E3440";
+export const GAMEOVER_BACKGROUND_COLOR = "#3B4252";
+export const TITLE_PLAYER_POSITION_RATIO = 0.3;
+export const TITLE_UI_Y_RATIO = 0.7;
