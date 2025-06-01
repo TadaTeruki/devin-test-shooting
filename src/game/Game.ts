@@ -8,7 +8,7 @@ import {
 	PLAYER_IMAGE_PATH,
 } from "./constants";
 import { GameState } from "./interfaces";
-import { GameOverScene } from "./scenes/GameOverScene";
+
 import { GameScene } from "./scenes/GameScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { ImageManager } from "./utils/ImageManager";
@@ -91,9 +91,6 @@ export class Game {
 
 		const gameScene = new GameScene(() => {
 			this.gameState = GameState.GameOver;
-			this.sceneManager.changeScene(
-				new GameOverScene(this.resetGame.bind(this)),
-			);
 		});
 
 		this.sceneManager.changeScene(gameScene);
