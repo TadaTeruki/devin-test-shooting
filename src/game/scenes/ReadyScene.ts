@@ -1,4 +1,4 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../constants";
+import { CANVAS_WIDTH, VIEWPORT_CENTER_Y } from "../constants";
 import { BaseScene } from "./BaseScene";
 
 export class ReadyScene extends BaseScene {
@@ -27,7 +27,7 @@ export class ReadyScene extends BaseScene {
 		ctx.fillStyle = "#FFFFFF";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
-		ctx.fillText("READY?", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+		ctx.fillText("READY?", CANVAS_WIDTH / 2, VIEWPORT_CENTER_Y);
 	}
 
 	handleMouseMove(_x: number, _y: number): void {}

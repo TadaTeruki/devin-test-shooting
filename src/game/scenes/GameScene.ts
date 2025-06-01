@@ -1,6 +1,5 @@
 import { Camera } from "../camera/Camera";
 import {
-	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
 	ENEMY_COLOR,
 	ENEMY_RADIUS,
@@ -11,6 +10,7 @@ import {
 	PLAYER_BULLET_SPEED,
 	PLAYER_BULLET_FIRE_INTERVAL,
 	READY_DISPLAY_DURATION,
+	VIEWPORT_CENTER_Y,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
@@ -119,7 +119,7 @@ export class GameScene extends BaseScene {
 			ctx.fillStyle = "#FFFFFF";
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.fillText("READY?", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+			ctx.fillText("READY?", CANVAS_WIDTH / 2, VIEWPORT_CENTER_Y);
 		}
 	}
 

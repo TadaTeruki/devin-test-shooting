@@ -1,5 +1,5 @@
 export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 600;
+export const CANVAS_HEIGHT = 1200;
 
 export const PLAYER_RADIUS = 15;
 export const PLAYER_COLOR = "#FFFFFF"; // 白
@@ -62,3 +62,6 @@ export const TITLE_BACKGROUND_COLOR = "#2E3440";
 export const GAMEOVER_BACKGROUND_COLOR = "#3B4252";
 export const TITLE_PLAYER_POSITION_RATIO = 0.3;
 export const TITLE_UI_Y_RATIO = 0.7;
+export const VIEWPORT_CENTER_Y = 517.5;
+export const GAMEOVER_TEXT_Y = VIEWPORT_CENTER_Y - 50;
+export const GAMEOVER_BUTTON_Y = VIEWPORT_CENTER_Y + 20;
