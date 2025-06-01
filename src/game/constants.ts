@@ -1,5 +1,5 @@
 export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 600;
+export const CANVAS_HEIGHT = 1200;
 
 export const PLAYER_RADIUS = 15;
 export const PLAYER_COLOR = "#FFFFFF"; // 白
@@ -61,6 +61,8 @@ export const SCORE_DISPLAY_COLOR = "#FFFFFF";
 export const SCORE_DISPLAY_X = 700;
 export const SCORE_DISPLAY_Y = 40;
 
+export const BULLET_AFTERIMAGE_COUNT = 5;
+export const BULLET_AFTERIMAGE_ALPHA_DECAY = 0.2;
 export const PLAYER_BULLET_FIRE_INTERVAL = 200; // 200ms
 export const TITLE_BACKGROUND_COLOR = "#2E3440";
 export const GAMEOVER_BACKGROUND_COLOR = "#3B4252";
@@ -71,5 +73,9 @@ export const HIGH_SCORE_DISPLAY_FONT = "bold 20px Arial";
 export const HIGH_SCORE_DISPLAY_COLOR = "#FFFFFF";
 export const HIGH_SCORE_DISPLAY_X = CANVAS_WIDTH / 2;
 export const HIGH_SCORE_DISPLAY_Y = CANVAS_HEIGHT * TITLE_UI_Y_RATIO - 25;
+
+export const VIEWPORT_CENTER_Y = 517.5;
+export const GAMEOVER_TEXT_Y = VIEWPORT_CENTER_Y - 50;
+export const GAMEOVER_BUTTON_Y = VIEWPORT_CENTER_Y + 20;
 export const GAMEOVER_HIGH_SCORE_DISPLAY_X = CANVAS_WIDTH / 2;
 export const GAMEOVER_HIGH_SCORE_DISPLAY_Y = CANVAS_HEIGHT / 2 - 25;
