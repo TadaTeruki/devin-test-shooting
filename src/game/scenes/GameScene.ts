@@ -339,7 +339,7 @@ export class GameScene extends BaseScene {
 		
 		const rand = Math.random();
 		
-		if (elapsedSeconds <= 15 && rand < 0.55) {
+		if (elapsedSeconds >= 15 && rand < 0.55) {
 			return EnemyType.Fast;
 		}
 		
