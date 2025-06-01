@@ -381,10 +381,9 @@ export class Background {
 		// ビーチの描画
 		this.drawBeach(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
 
-		// 海の描画
-		this.drawSea(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
-
 		this.drawRoad(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
+
+		this.drawSea(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
 
 		// 木の影の描画
 		this.drawTreeShadow(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
