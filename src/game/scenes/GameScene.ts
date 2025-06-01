@@ -35,12 +35,24 @@ import {
 	LIVES_DISPLAY_X,
 	LIVES_DISPLAY_Y,
 	LIVES_DISPLAY_SPACING,
+	SPECIAL_ATTACK_CHARGE_TIME,
+	SPECIAL_ATTACK_KEY,
+	SPECIAL_BULLET_COLOR,
+	SPECIAL_BULLET_SPEED,
+	SPECIAL_GAUGE_WIDTH,
+	SPECIAL_GAUGE_HEIGHT,
+	SPECIAL_GAUGE_X,
+	SPECIAL_GAUGE_Y,
+	SPECIAL_GAUGE_BG_COLOR,
+	SPECIAL_GAUGE_FILL_COLOR,
+	SPECIAL_GAUGE_FLASH_COLOR,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
 import { Enemy } from "../entities/Enemy";
 import { Particle } from "../entities/Particle";
 import { Player } from "../entities/Player";
+import { SpecialBullet } from "../entities/SpecialBullet";
 import { BulletType, GameState, EnemyType } from "../interfaces";
 import type { Vector2D } from "../interfaces";
 import { BaseScene } from "./BaseScene";
@@ -62,6 +74,10 @@ export class GameScene extends BaseScene {
 	isReady: boolean;
 	readyElapsedTime: number;
 	readyDuration: number;
+	specialAttackChargeTime: number;
+	specialAttackReady: boolean;
+	specialAttackFlashTimer: number;
+	specialBullets: SpecialBullet[];
 
 	constructor(onGameOver: () => void) {
 		super();
@@ -81,6 +97,10 @@ export class GameScene extends BaseScene {
 		this.isReady = false;
 		this.readyElapsedTime = 0;
 		this.readyDuration = READY_DISPLAY_DURATION;
+		this.specialAttackChargeTime = 0;
+		this.specialAttackReady = false;
+		this.specialAttackFlashTimer = 0;
+		this.specialBullets = [];
 	}
 
 	update(deltaTime: number): void {
@@ -125,6 +145,22 @@ export class GameScene extends BaseScene {
 			particle.update(deltaTime);
 		}
 
+		if (!this.specialAttackReady) {
+			this.specialAttackChargeTime += deltaTime * 1000;
+			if (this.specialAttackChargeTime >= SPECIAL_ATTACK_CHARGE_TIME) {
+				this.specialAttackReady = true;
+				this.specialAttackFlashTimer = 0;
+			}
+		}
+
+		if (this.specialAttackReady) {
+			this.specialAttackFlashTimer += deltaTime * 1000;
+		}
+
+		for (const bullet of this.specialBullets) {
+			bullet.update(deltaTime);
+		}
+
 		this.checkCollisions();
 
 		this.cleanupInactiveObjects();
@@ -153,7 +189,13 @@ export class GameScene extends BaseScene {
 			particle.draw(ctx);
 		}
 
+		for (const bullet of this.specialBullets) {
+			bullet.draw(ctx);
+		}
+
 		this.drawLives(ctx);
+
+		this.drawSpecialGauge(ctx);
 
 		ctx.font = SCORE_DISPLAY_FONT;
 		ctx.fillStyle = SCORE_DISPLAY_COLOR;
@@ -195,6 +237,8 @@ export class GameScene extends BaseScene {
 
 		if (key === KEY_SPACE) {
 			this.shootPlayerBullet();
+		} else if (key === SPECIAL_ATTACK_KEY && this.specialAttackReady) {
+			this.shootSpecialAttack();
 		}
 	}
 
@@ -305,12 +349,32 @@ export class GameScene extends BaseScene {
 				}
 			}
 		}
+
+		for (const bullet of this.specialBullets) {
+			if (!bullet.isActive) continue;
+
+			for (const enemy of this.enemies) {
+				if (!enemy.isActive) continue;
+
+				if (bullet.isColliding(enemy)) {
+					bullet.isActive = false;
+					const isDestroyed = enemy.takeDamage();
+					if (isDestroyed) {
+						this.spawnExplosionParticles(enemy.position);
+						enemy.isActive = false;
+						this.score += SCORE_PER_ENEMY;
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	private cleanupInactiveObjects(): void {
 		this.enemies = this.enemies.filter((enemy) => enemy.isActive);
 		this.playerBullets = this.playerBullets.filter((bullet) => bullet.isActive);
 		this.enemyBullets = this.enemyBullets.filter((bullet) => bullet.isActive);
+		this.specialBullets = this.specialBullets.filter((bullet) => bullet.isActive);
 		this.particles = this.particles.filter((particle) => particle.isActive);
 	}
 
@@ -393,6 +457,66 @@ export class GameScene extends BaseScene {
 				ctx.closePath();
 			}
 		}
+	}
+
+	private shootSpecialAttack(): void {
+		this.specialAttackReady = false;
+		this.specialAttackChargeTime = 0;
+		this.specialAttackFlashTimer = 0;
+
+		for (const enemy of this.enemies) {
+			if (!enemy.isActive) continue;
+
+			const bulletPosition: Vector2D = {
+				x: this.player.position.x,
+				y: this.player.position.y - this.player.radius,
+			};
+
+			const bulletVelocity: Vector2D = {
+				x: 0,
+				y: -SPECIAL_BULLET_SPEED,
+			};
+
+			const specialBullet = new SpecialBullet(
+				bulletPosition,
+				PLAYER_BULLET_RADIUS,
+				SPECIAL_BULLET_COLOR,
+				bulletVelocity,
+				this.enemies
+			);
+
+			this.specialBullets.push(specialBullet);
+		}
+	}
+
+	private drawSpecialGauge(ctx: CanvasRenderingContext2D): void {
+		ctx.fillStyle = SPECIAL_GAUGE_BG_COLOR;
+		ctx.fillRect(SPECIAL_GAUGE_X, SPECIAL_GAUGE_Y, SPECIAL_GAUGE_WIDTH, SPECIAL_GAUGE_HEIGHT);
+
+		const fillRatio = Math.min(this.specialAttackChargeTime / SPECIAL_ATTACK_CHARGE_TIME, 1);
+		const fillWidth = SPECIAL_GAUGE_WIDTH * fillRatio;
+
+		let fillColor = SPECIAL_GAUGE_FILL_COLOR;
+		if (this.specialAttackReady) {
+			const flashInterval = 500;
+			const isFlashing = Math.floor(this.specialAttackFlashTimer / flashInterval) % 2 === 0;
+			fillColor = isFlashing ? SPECIAL_GAUGE_FLASH_COLOR : SPECIAL_GAUGE_FILL_COLOR;
+		}
+
+		if (fillWidth > 0) {
+			ctx.fillStyle = fillColor;
+			ctx.fillRect(SPECIAL_GAUGE_X, SPECIAL_GAUGE_Y, fillWidth, SPECIAL_GAUGE_HEIGHT);
+		}
+
+		ctx.strokeStyle = "#FFFFFF";
+		ctx.lineWidth = 2;
+		ctx.strokeRect(SPECIAL_GAUGE_X, SPECIAL_GAUGE_Y, SPECIAL_GAUGE_WIDTH, SPECIAL_GAUGE_HEIGHT);
+
+		ctx.font = "16px Arial";
+		ctx.fillStyle = "#FFFFFF";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "bottom";
+		ctx.fillText("SPECIAL", SPECIAL_GAUGE_X + SPECIAL_GAUGE_WIDTH / 2, SPECIAL_GAUGE_Y - 5);
 	}
 
 	private gameOver(): void {

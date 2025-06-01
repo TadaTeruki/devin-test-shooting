@@ -134,3 +134,16 @@ export const PLAYER_BLINK_INTERVAL = 10;
 export const LIVES_DISPLAY_X = 40;
 export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
+
+export const SPECIAL_ATTACK_CHARGE_TIME = 30000;
+export const SPECIAL_ATTACK_KEY = "x";
+export const SPECIAL_BULLET_COLOR = "#FFD700";
+export const SPECIAL_BULLET_SPEED = 400;
+export const SPECIAL_BULLET_HOMING_RATIO = 0.1;
+export const SPECIAL_GAUGE_WIDTH = 200;
+export const SPECIAL_GAUGE_HEIGHT = 20;
+export const SPECIAL_GAUGE_X = (CANVAS_WIDTH - SPECIAL_GAUGE_WIDTH) / 2;
+export const SPECIAL_GAUGE_Y = CANVAS_HEIGHT - 50;
+export const SPECIAL_GAUGE_BG_COLOR = "#808080";
+export const SPECIAL_GAUGE_FILL_COLOR = "#FFA500";
+export const SPECIAL_GAUGE_FLASH_COLOR = "#FFFFFF";
