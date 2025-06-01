@@ -55,6 +55,7 @@ export const KEY_SPACE = " ";
 
 export const READY_DISPLAY_DURATION = 3; // seconds
 
+export const PLAYER_BULLET_FIRE_INTERVAL = 200; // 200ms
 export const TITLE_BACKGROUND_COLOR = "#2E3440";
 export const GAMEOVER_BACKGROUND_COLOR = "#3B4252";
 export const TITLE_PLAYER_POSITION_RATIO = 0.3;
