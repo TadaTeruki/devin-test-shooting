@@ -75,8 +75,8 @@ export const ENEMY_HEAVY_IMAGE_PATH = "/assets/enemy-gray.png";
 
 export const PLAYER_SHOOT_SOUND_PATH = "/sounds/8bit_shoot1.mp3";
 export const ENEMY_SHOOT_SOUND_PATH = "/sounds/8bit_laser1.mp3";
-export const EXPLOSION_SOUND_PATH = "/sounds/game_explosion1.mp3";
-export const PLAYER_DAMAGE_SOUND_PATH = "/sounds/game_explosion2.mp3";
+export const EXPLOSION_SOUND_PATH = "/sounds/game_explosion6.mp3";
+export const PLAYER_DAMAGE_SOUND_PATH = "/sounds/game_explosion6.mp3";
 export const ENEMY_SPAWN_SOUND_PATH = "/sounds/8bit_laser2.mp3";
 export const BUTTON_CLICK_SOUND_PATH = "/sounds/button01a.mp3";
 export const BUTTON_SELECT_SOUND_PATH = "/sounds/select01.mp3";
