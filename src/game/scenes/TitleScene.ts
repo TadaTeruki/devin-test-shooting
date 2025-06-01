@@ -6,7 +6,6 @@ import {
 	TITLE_UI_Y_RATIO,
 	PLAYER_IMAGE_PATH,
 } from "../constants";
-import { ImageManager } from "../utils/ImageManager";
 import { BaseScene } from "./BaseScene";
 
 export class TitleScene extends BaseScene {
@@ -17,7 +16,11 @@ export class TitleScene extends BaseScene {
 	constructor(onStart: () => void) {
 		super();
 		this.onStart = onStart;
-		this.playerImage = ImageManager.getInstance().getImage(PLAYER_IMAGE_PATH);
+		this.playerImage = new Image();
+		this.playerImage.src = PLAYER_IMAGE_PATH;
+		this.playerImage.onload = () => {
+			console.log("Player image loaded successfully");
+		};
 
 		const uiCenterY = CANVAS_HEIGHT * TITLE_UI_Y_RATIO;
 		this.startButtonBounds = {
