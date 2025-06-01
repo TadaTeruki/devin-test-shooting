@@ -257,14 +257,21 @@ export class GameScene extends BaseScene {
 	private checkCollisions(): void {
 		for (const enemy of this.enemies) {
 			if (enemy.isActive && this.player.isColliding(enemy)) {
-				this.gameOver();
+				const isDestroyed = this.player.takeDamage();
+				if (isDestroyed) {
+					this.gameOver();
+				}
 				return;
 			}
 		}
 
 		for (const bullet of this.enemyBullets) {
 			if (bullet.isActive && this.player.isColliding(bullet)) {
-				this.gameOver();
+				bullet.isActive = false;
+				const isDestroyed = this.player.takeDamage();
+				if (isDestroyed) {
+					this.gameOver();
+				}
 				return;
 			}
 		}
