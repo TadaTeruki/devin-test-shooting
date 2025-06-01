@@ -6,6 +6,8 @@ import {
 	BACKGROUND_LEAF_COLOR_LIGHT,
 	BACKGROUND_LEAF_NOISE_SCALE,
 	BACKGROUND_LEAF_NOISE_THRESHOLD,
+	BACKGROUND_LEAF_COLOR_NOISE_SCALE_X,
+	BACKGROUND_LEAF_COLOR_NOISE_SCALE_Y,
 	BACKGROUND_NOISE_SCALE_X,
 	BACKGROUND_NOISE_SCALE_Y,
 	BACKGROUND_BEACH_COLOR,
@@ -33,11 +35,13 @@ export class Background {
 	perlinNoise: PerlinNoise;
 	seaPerlinNoise: PerlinNoise;
 	leafPerlinNoise: PerlinNoise;
+	leafColorPerlinNoise: PerlinNoise;
 
 	constructor() {
 		this.perlinNoise = new PerlinNoise();
 		this.seaPerlinNoise = new PerlinNoise();
 		this.leafPerlinNoise = new PerlinNoise();
+		this.leafColorPerlinNoise = new PerlinNoise();
 	}
 
 	update(_deltaTime: number, _camera?: Camera): void {}
@@ -136,8 +140,11 @@ export class Background {
 				);
 
 				if (leafNoiseValue > BACKGROUND_LEAF_NOISE_THRESHOLD) {
-					const t = (leafNoiseValue - BACKGROUND_LEAF_NOISE_THRESHOLD) / 
-						(1 - BACKGROUND_LEAF_NOISE_THRESHOLD);
+					const colorNoiseValue = this.leafColorPerlinNoise.noise(
+						worldPos.x * BACKGROUND_LEAF_COLOR_NOISE_SCALE_X,
+						worldPos.y * BACKGROUND_LEAF_COLOR_NOISE_SCALE_Y,
+					);
+					const t = (colorNoiseValue + 1) / 2;
 					const leafColor = this.interpolateColor(
 						BACKGROUND_LEAF_COLOR_DARK,
 						BACKGROUND_LEAF_COLOR_LIGHT,
