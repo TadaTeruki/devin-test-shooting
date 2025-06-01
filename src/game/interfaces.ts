@@ -34,6 +34,7 @@ export type GameState = (typeof GameState)[keyof typeof GameState];
 export const BulletType = {
 	Player: 0,
 	Enemy: 1,
+	Special: 2,
 } as const;
 
 export type BulletType = (typeof BulletType)[keyof typeof BulletType];
