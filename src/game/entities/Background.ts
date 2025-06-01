@@ -1,9 +1,15 @@
 import type { Camera } from "../camera/Camera";
 import {
-	BACKGROUND_BEACH_COLOR,
-	BACKGROUND_BEACH_RADIUS_FACTOR,
 	BACKGROUND_COLOR_GREEN,
 	BACKGROUND_COLOR_LIGHT_GREEN,
+	BACKGROUND_LEAF_COLOR_DARK,
+	BACKGROUND_LEAF_COLOR_LIGHT,
+	BACKGROUND_LEAF_NOISE_SCALE,
+	BACKGROUND_LEAF_NOISE_THRESHOLD,
+	BACKGROUND_LEAF_COLOR_NOISE_SCALE_X,
+	BACKGROUND_LEAF_COLOR_NOISE_SCALE_Y,
+	BACKGROUND_BEACH_COLOR,
+	BACKGROUND_BEACH_RADIUS_FACTOR,
 	BACKGROUND_GRID_SPACING,
 	BACKGROUND_NOISE_SCALE_X,
 	BACKGROUND_NOISE_SCALE_Y,
@@ -31,16 +37,21 @@ import { PerlinNoise } from "../utils/perlin";
 export class Background {
 	perlinNoise: PerlinNoise;
 	seaPerlinNoise: PerlinNoise;
+	leafPerlinNoise: PerlinNoise;
+	leafColorPerlinNoise: PerlinNoise;
 
 	constructor() {
 		this.perlinNoise = new PerlinNoise();
 		this.seaPerlinNoise = new PerlinNoise();
+		this.leafPerlinNoise = new PerlinNoise();
+		this.leafColorPerlinNoise = new PerlinNoise();
 	}
 
 	update(_deltaTime: number, _camera?: Camera): void {}
 
 	draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
 		this.drawBackgroundNoise(ctx, camera);
+		this.drawLeafAreas(ctx, camera);
 
 		this.drawTrees(ctx, camera);
 	}
@@ -64,14 +75,11 @@ export class Background {
 		return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 	}
 
-	/**
-	 * パーリンノイズを使用した背景色を描画
-	 */
 	private drawBackgroundNoise(
 		ctx: CanvasRenderingContext2D,
 		camera: Camera,
 	): void {
-		const gridSize = 10; // 背景グリッドのサイズ
+		const gridSize = 10;
 
 		const topLeft = camera.screenToWorld({ x: 0, y: 0 });
 		const bottomRight = camera.screenToWorld({
@@ -103,6 +111,52 @@ export class Background {
 
 				ctx.fillStyle = backgroundColor;
 				ctx.fillRect(screenPos.x, screenPos.y, gridSize + 1, gridSize + 1);
+			}
+		}
+	}
+
+	private drawLeafAreas(
+		ctx: CanvasRenderingContext2D,
+		camera: Camera,
+	): void {
+		const gridSize = 15;
+
+		const topLeft = camera.screenToWorld({ x: 0, y: 0 });
+		const bottomRight = camera.screenToWorld({
+			x: CANVAS_WIDTH,
+			y: CANVAS_HEIGHT,
+		});
+
+		const minGridX = Math.floor(topLeft.x / gridSize);
+		const maxGridX = Math.ceil(bottomRight.x / gridSize);
+		const minGridY = Math.floor(topLeft.y / gridSize);
+		const maxGridY = Math.ceil(bottomRight.y / gridSize);
+
+		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
+			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
+				const worldPos = { x: gridX * gridSize, y: gridY * gridSize };
+				const screenPos = camera.worldToScreen(worldPos);
+
+				const leafNoiseValue = this.leafPerlinNoise.noise(
+					worldPos.x * BACKGROUND_LEAF_NOISE_SCALE,
+					worldPos.y * BACKGROUND_LEAF_NOISE_SCALE,
+				);
+
+				if (leafNoiseValue > BACKGROUND_LEAF_NOISE_THRESHOLD) {
+					const colorNoiseValue = this.leafColorPerlinNoise.noise(
+						worldPos.x * BACKGROUND_LEAF_COLOR_NOISE_SCALE_X,
+						worldPos.y * BACKGROUND_LEAF_COLOR_NOISE_SCALE_Y,
+					);
+					const t = (colorNoiseValue + 1) / 2;
+					const leafColor = this.interpolateColor(
+						BACKGROUND_LEAF_COLOR_DARK,
+						BACKGROUND_LEAF_COLOR_LIGHT,
+						t,
+					);
+
+					ctx.fillStyle = leafColor;
+					ctx.fillRect(screenPos.x, screenPos.y, gridSize + 1, gridSize + 1);
+				}
 			}
 		}
 	}
