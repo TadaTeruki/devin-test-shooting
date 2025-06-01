@@ -54,3 +54,7 @@ export const BACKGROUND_BEACH_RADIUS_FACTOR = 1.5; // 海の半径に対する�
 export const KEY_SPACE = " ";
 
 export const READY_DISPLAY_DURATION = 3; // seconds
+
+export const VIEWPORT_CENTER_Y = 517.5;
+export const GAMEOVER_TEXT_Y = VIEWPORT_CENTER_Y - 50;
+export const GAMEOVER_BUTTON_Y = VIEWPORT_CENTER_Y + 20;
