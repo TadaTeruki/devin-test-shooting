@@ -1,3 +1,4 @@
+import { Camera } from "../camera/Camera";
 import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
@@ -6,10 +7,18 @@ import {
 	HIGH_SCORE_DISPLAY_COLOR,
 	HIGH_SCORE_DISPLAY_X,
 	HIGH_SCORE_DISPLAY_Y,
-	TITLE_BACKGROUND_COLOR,
+
 	TITLE_PLAYER_POSITION_RATIO,
 	TITLE_UI_Y_RATIO,
+	TITLE_FONT,
+	TITLE_START_BUTTON_FONT,
+	TITLE_CONTROLS_FONT,
+	TITLE_OVERLAY_COLOR,
+	CONTROL_INSTRUCTIONS,
+	CONTROLS_START_Y,
+	CONTROLS_LINE_HEIGHT,
 } from "../constants";
+import { Background } from "../entities/Background";
 import { HighScoreManager } from "../utils/HighScoreManager";
 
 import { BaseScene } from "./BaseScene";
@@ -18,10 +27,14 @@ export class TitleScene extends BaseScene {
 	onStart: () => void;
 	startButtonBounds: { x: number; y: number; width: number; height: number };
 	playerImage: HTMLImageElement | null;
+	background: Background;
+	camera: Camera;
 
 	constructor(onStart: () => void) {
 		super();
 		this.onStart = onStart;
+		this.background = new Background();
+		this.camera = new Camera();
 		this.playerImage = new Image();
 		this.playerImage.src = PLAYER_IMAGE_PATH;
 		this.playerImage.onload = () => {
@@ -44,10 +57,15 @@ export class TitleScene extends BaseScene {
 		});
 	}
 
-	update(_deltaTime: number): void {}
+	update(deltaTime: number): void {
+		this.camera.update(deltaTime);
+		this.background.update(deltaTime, this.camera);
+	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
-		ctx.fillStyle = TITLE_BACKGROUND_COLOR;
+		this.background.draw(ctx, this.camera);
+		
+		ctx.fillStyle = TITLE_OVERLAY_COLOR;
 		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 		if (this.playerImage) {
@@ -64,7 +82,7 @@ export class TitleScene extends BaseScene {
 		}
 
 		const uiCenterY = CANVAS_HEIGHT * TITLE_UI_Y_RATIO;
-		ctx.font = "bold 48px Arial";
+		ctx.font = TITLE_FONT;
 		ctx.fillStyle = "#FFFFFF";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
@@ -78,13 +96,23 @@ export class TitleScene extends BaseScene {
 			this.startButtonBounds.height,
 		);
 
-		ctx.font = "bold 24px Arial";
+		ctx.font = TITLE_START_BUTTON_FONT;
 		ctx.fillStyle = "#FFFFFF";
 		ctx.fillText(
 			"START",
 			CANVAS_WIDTH / 2,
 			this.startButtonBounds.y + this.startButtonBounds.height / 2,
 		);
+
+		ctx.font = TITLE_CONTROLS_FONT;
+		ctx.fillStyle = "#FFFFFF";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		
+		for (let i = 0; i < CONTROL_INSTRUCTIONS.length; i++) {
+			const y = CONTROLS_START_Y + i * CONTROLS_LINE_HEIGHT;
+			ctx.fillText(CONTROL_INSTRUCTIONS[i], CANVAS_WIDTH / 2, y);
+		}
 
 		const highScore = HighScoreManager.getHighScore();
 		ctx.font = HIGH_SCORE_DISPLAY_FONT;

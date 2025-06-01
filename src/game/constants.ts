@@ -103,6 +103,7 @@ export const KEY_SPACE = " ";
 export const READY_DISPLAY_DURATION = 3; // seconds
 
 export const SCORE_PER_ENEMY = 100;
+export const SCORE_PER_HEAVY_ENEMY = 500;
 export const SCORE_DISPLAY_FONT = "bold 24px Arial";
 export const SCORE_DISPLAY_COLOR = "#FFFFFF";
 export const SCORE_DISPLAY_X = 700;
@@ -121,6 +122,20 @@ export const HIGH_SCORE_DISPLAY_COLOR = "#FFFFFF";
 export const HIGH_SCORE_DISPLAY_X = CANVAS_WIDTH / 2;
 export const HIGH_SCORE_DISPLAY_Y = CANVAS_HEIGHT * TITLE_UI_Y_RATIO - 10;
 
+export const TITLE_FONT = "italic 48px 'Playfair Display', serif";
+export const TITLE_START_BUTTON_FONT = "bold 24px 'Playfair Display', serif";
+export const TITLE_CONTROLS_FONT = "20px 'Playfair Display', serif";
+
+export const TITLE_OVERLAY_COLOR = "rgba(59, 66, 82, 0.7)";
+
+export const CONTROL_INSTRUCTIONS = [
+	"マウス: 移動",
+	"スペースキー: 弾発射",
+	"Pキー: 必殺技"
+];
+export const CONTROLS_START_Y = CANVAS_HEIGHT * 0.65;
+export const CONTROLS_LINE_HEIGHT = 30;
+
 export const VIEWPORT_CENTER_Y = 517.5;
 export const GAMEOVER_TEXT_Y = VIEWPORT_CENTER_Y - 50;
 export const GAMEOVER_BUTTON_Y = VIEWPORT_CENTER_Y + 20;
@@ -135,7 +150,7 @@ export const LIVES_DISPLAY_X = 40;
 export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
 
-export const SPECIAL_ATTACK_CHARGE_TIME = 30000;
+export const SPECIAL_ATTACK_CHARGE_TIME = 3000;
 export const SPECIAL_ATTACK_KEY = "p";
 export const SPECIAL_BULLET_COLOR = "#FFD700";
 export const SPECIAL_BULLET_SPEED = 800;
@@ -143,7 +158,7 @@ export const SPECIAL_BULLET_HOMING_RATIO = 0.1;
 export const SPECIAL_GAUGE_WIDTH = 200;
 export const SPECIAL_GAUGE_HEIGHT = 20;
 export const SPECIAL_GAUGE_X = (CANVAS_WIDTH - SPECIAL_GAUGE_WIDTH) / 2;
-export const SPECIAL_GAUGE_Y = CANVAS_HEIGHT - 50;
+export const SPECIAL_GAUGE_Y = CANVAS_HEIGHT * 0.75;
 export const SPECIAL_GAUGE_BG_COLOR = "#808080";
 export const SPECIAL_GAUGE_FILL_COLOR = "#FFA500";
 export const SPECIAL_GAUGE_FLASH_COLOR = "#FFFFFF";
