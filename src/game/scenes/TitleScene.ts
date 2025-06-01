@@ -157,7 +157,7 @@ export class TitleScene extends BaseScene {
 		if (isInButtonX && isInButtonY) {
 			console.log("Start button clicked! Calling onStart...");
 			const soundManager = SoundManager.getInstance();
-			soundManager.playSound("button-click", 0.3);
+			soundManager.playSound("button-click", 0.1);
 			this.onStart();
 		} else {
 			console.log("Click outside button bounds");
