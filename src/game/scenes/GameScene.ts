@@ -10,6 +10,7 @@ import {
 	PLAYER_BULLET_COLOR,
 	PLAYER_BULLET_RADIUS,
 	PLAYER_BULLET_SPEED,
+	PLAYER_BULLET_FIRE_INTERVAL,
 	READY_DISPLAY_DURATION,
 	SCORE_PER_ENEMY,
 	SCORE_DISPLAY_FONT,
@@ -34,6 +35,7 @@ export class GameScene extends BaseScene {
 	camera: Camera;
 	lastEnemySpawnTime: number;
 	score: number;
+	lastPlayerBulletTime: number;
 	gameState: GameState;
 	onGameOver: () => void;
 	gameStartTime: number;
@@ -51,6 +53,7 @@ export class GameScene extends BaseScene {
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
 		this.score = 0;
+		this.lastPlayerBulletTime = 0;
 		this.gameStartTime = Date.now();
 		this.gameState = GameState.Playing;
 		this.onGameOver = onGameOver;
@@ -105,10 +108,10 @@ export class GameScene extends BaseScene {
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.background.draw(ctx, this.camera);
 
-		this.player.draw(ctx);
+		this.player.draw(ctx, this.camera, this.background);
 
 		for (const enemy of this.enemies) {
-			enemy.draw(ctx);
+			enemy.draw(ctx, this.camera, this.background);
 		}
 
 		for (const bullet of this.playerBullets) {
@@ -194,6 +197,12 @@ export class GameScene extends BaseScene {
 	}
 
 	private shootPlayerBullet(): void {
+		const currentTime = Date.now();
+
+		if (currentTime - this.lastPlayerBulletTime < PLAYER_BULLET_FIRE_INTERVAL) {
+			return;
+		}
+
 		const bulletPosition: Vector2D = {
 			x: this.player.position.x,
 			y: this.player.position.y - this.player.radius,
@@ -213,6 +222,7 @@ export class GameScene extends BaseScene {
 		);
 
 		this.playerBullets.push(bullet);
+		this.lastPlayerBulletTime = currentTime;
 	}
 
 	private checkCollisions(): void {

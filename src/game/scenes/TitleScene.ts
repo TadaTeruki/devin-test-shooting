@@ -5,21 +5,33 @@ import {
 	HIGH_SCORE_DISPLAY_COLOR,
 	HIGH_SCORE_DISPLAY_X,
 	HIGH_SCORE_DISPLAY_Y,
+	TITLE_BACKGROUND_COLOR,
+	TITLE_PLAYER_POSITION_RATIO,
+	TITLE_UI_Y_RATIO,
+	PLAYER_IMAGE_PATH,
 } from "../constants";
 import { HighScoreManager } from "../utils/HighScoreManager";
+
 import { BaseScene } from "./BaseScene";
 
 export class TitleScene extends BaseScene {
 	onStart: () => void;
 	startButtonBounds: { x: number; y: number; width: number; height: number };
+	playerImage: HTMLImageElement | null;
 
 	constructor(onStart: () => void) {
 		super();
 		this.onStart = onStart;
+		this.playerImage = new Image();
+		this.playerImage.src = PLAYER_IMAGE_PATH;
+		this.playerImage.onload = () => {
+			console.log("Player image loaded successfully");
+		};
 
+		const uiCenterY = CANVAS_HEIGHT * TITLE_UI_Y_RATIO;
 		this.startButtonBounds = {
 			x: CANVAS_WIDTH / 2 - 100,
-			y: CANVAS_HEIGHT / 2 + 20,
+			y: uiCenterY + 20,
 			width: 200,
 			height: 60,
 		};
@@ -35,11 +47,28 @@ export class TitleScene extends BaseScene {
 	update(_deltaTime: number): void {}
 
 	draw(ctx: CanvasRenderingContext2D): void {
+		ctx.fillStyle = TITLE_BACKGROUND_COLOR;
+		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+		if (this.playerImage) {
+			const playerImageX = CANVAS_WIDTH / 2;
+			const playerImageY = CANVAS_HEIGHT * TITLE_PLAYER_POSITION_RATIO;
+			const imageSize = 200;
+			ctx.drawImage(
+				this.playerImage,
+				playerImageX - imageSize / 2,
+				playerImageY - imageSize / 2,
+				imageSize,
+				imageSize,
+			);
+		}
+
+		const uiCenterY = CANVAS_HEIGHT * TITLE_UI_Y_RATIO;
 		ctx.font = "bold 48px Arial";
 		ctx.fillStyle = "#FFFFFF";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
-		ctx.fillText("Pevious ペビウス", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 50);
+		ctx.fillText("Pevious ペビウス", CANVAS_WIDTH / 2, uiCenterY - 50);
 
 		ctx.fillStyle = "#4CAF50";
 		ctx.fillRect(
