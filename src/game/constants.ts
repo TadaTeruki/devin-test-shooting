@@ -126,3 +126,15 @@ export const GAMEOVER_TEXT_Y = VIEWPORT_CENTER_Y - 50;
 export const GAMEOVER_BUTTON_Y = VIEWPORT_CENTER_Y + 20;
 export const GAMEOVER_HIGH_SCORE_DISPLAY_X = CANVAS_WIDTH / 2;
 export const GAMEOVER_HIGH_SCORE_DISPLAY_Y = GAMEOVER_TEXT_Y + 40;
+
+export const CLOUD_COLOR = "#FFFFFF";
+export const CLOUD_RADIUS_MIN = 0;
+export const CLOUD_RADIUS_VISIBLE = 25;
+export const CLOUD_RADIUS_MAX = 40;
+export const CLOUD_NOISE_SCALE = 0.001;
+export const CLOUD_SCROLL_SPEED = 300;
+export const CLOUD_SHADOW_COLOR = "#333";
+export const CLOUD_SHADOW_COLOR_SEA = "rgba(255, 255, 255, 0.3)";
+export const CLOUD_SHADOW_OFFSET_X = 20;
+export const CLOUD_SHADOW_OFFSET_Y = 15;
+export const CLOUD_GRID_SPACING = 15.0;
