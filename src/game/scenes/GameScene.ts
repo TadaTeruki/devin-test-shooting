@@ -607,7 +607,7 @@ export class GameScene extends BaseScene {
 		this.specialAttackKillCount = 0;
 
 		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("special-attack", 0.1);
+		soundManager.playSound("special-attack", 0.2);
 
 		for (const enemy of this.enemies) {
 			if (!enemy.isActive) continue;

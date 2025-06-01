@@ -43,8 +43,8 @@ export const BACKGROUND_LEAF_COLOR_NOISE_SCALE_Y = 0.08;
 export const BACKGROUND_NOISE_SCALE_X = 0.02;
 export const BACKGROUND_NOISE_SCALE_Y = 0.08;
 
-export const SHADOW_OFFSET_X = 30;
-export const SHADOW_OFFSET_Y = 30;
+export const SHADOW_OFFSET_X = 50;
+export const SHADOW_OFFSET_Y = 50;
 export const SHADOW_COLOR = "rgba(0, 0, 0, 0.3)";
 
 export const PLAYER_IMAGE_PATH = "/assets/player.png";
@@ -160,7 +160,7 @@ export const LIVES_DISPLAY_X = 40;
 export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
 
-export const SPECIAL_ATTACK_CHARGE_TIME = 3000;
+export const SPECIAL_ATTACK_CHARGE_TIME = 12000;
 export const SPECIAL_ATTACK_KEY = "p";
 export const SPECIAL_BULLET_COLOR = "#F0C700";
 export const SPECIAL_BULLET_SPEED = 800;
@@ -178,10 +178,10 @@ export const CLOUD_SCROLL_SPEED = 350;
 export const CLOUD_COLOR_LIGHT = "#FFFFFF";
 export const CLOUD_COLOR_DARK = "#E8E8E8";
 export const CLOUD_OPACITY = 0.7;
-export const CLOUD_NOISE_SCALE = 0.003;
-export const CLOUD_NOISE_THRESHOLD = 0.7;
+export const CLOUD_NOISE_SCALE = 0.001;
+export const CLOUD_NOISE_THRESHOLD = 0.6;
 export const CLOUD_RADIUS_MIN = 0;
-export const CLOUD_RADIUS_MAX = 20;
+export const CLOUD_RADIUS_MAX = 30;
 export const CLOUD_RADIUS_VISIBLE = 20;
 export const CLOUD_GRID_SPACING = 15.0;
 
