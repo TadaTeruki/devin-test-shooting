@@ -1,10 +1,10 @@
 import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
+	PLAYER_IMAGE_PATH,
 	TITLE_BACKGROUND_COLOR,
 	TITLE_PLAYER_POSITION_RATIO,
 	TITLE_UI_Y_RATIO,
-	PLAYER_IMAGE_PATH,
 } from "../constants";
 import { BaseScene } from "./BaseScene";
 

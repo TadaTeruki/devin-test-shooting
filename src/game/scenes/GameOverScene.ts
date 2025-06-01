@@ -1,9 +1,9 @@
 import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
+	GAMEOVER_BACKGROUND_COLOR,
 	GAMEOVER_BUTTON_Y,
 	GAMEOVER_TEXT_Y,
-	GAMEOVER_BACKGROUND_COLOR,
 } from "../constants";
 import { BaseScene } from "./BaseScene";
 

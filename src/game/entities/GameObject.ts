@@ -11,8 +11,8 @@ export abstract class GameObject implements IGameObject, Collidable {
 	color: string;
 	isActive: boolean;
 	image: HTMLImageElement | null = null;
-	imageLoaded: boolean = false;
-	hasShadow: boolean = false;
+	imageLoaded = false;
+	hasShadow = false;
 
 	constructor(position: Vector2D, radius: number, color: string) {
 		this.id = generateId();

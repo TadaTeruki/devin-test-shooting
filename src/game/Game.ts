@@ -8,8 +8,8 @@ import {
 import { GameState } from "./interfaces";
 import { GameOverScene } from "./scenes/GameOverScene";
 import { GameScene } from "./scenes/GameScene";
-import { ImageManager } from "./utils/ImageManager";
 import { TitleScene } from "./scenes/TitleScene";
+import { ImageManager } from "./utils/ImageManager";
 
 export class Game {
 	canvas: HTMLCanvasElement;
