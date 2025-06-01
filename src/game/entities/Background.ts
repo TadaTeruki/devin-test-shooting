@@ -2,6 +2,15 @@ import type { Camera } from "../camera/Camera";
 import {
 	BACKGROUND_BEACH_COLOR,
 	BACKGROUND_BEACH_RADIUS_FACTOR,
+	BACKGROUND_CLOUD_COLOR,
+	BACKGROUND_CLOUD_NOISE_SCALE,
+	BACKGROUND_CLOUD_RADIUS_MAX,
+	BACKGROUND_CLOUD_RADIUS_MIN,
+	BACKGROUND_CLOUD_RADIUS_VISIBLE,
+	BACKGROUND_CLOUD_SCROLL_SPEED_MULTIPLIER,
+	BACKGROUND_CLOUD_SHADOW_COLOR,
+	BACKGROUND_CLOUD_SHADOW_OFFSET_X,
+	BACKGROUND_CLOUD_SHADOW_OFFSET_Y,
 	BACKGROUND_COLOR_GREEN,
 	BACKGROUND_COLOR_LIGHT_GREEN,
 	BACKGROUND_GRID_SPACING,
@@ -31,10 +40,12 @@ import { PerlinNoise } from "../utils/perlin";
 export class Background {
 	perlinNoise: PerlinNoise;
 	seaPerlinNoise: PerlinNoise;
+	cloudPerlinNoise: PerlinNoise;
 
 	constructor() {
 		this.perlinNoise = new PerlinNoise();
 		this.seaPerlinNoise = new PerlinNoise();
+		this.cloudPerlinNoise = new PerlinNoise();
 	}
 
 	update(_deltaTime: number, _camera?: Camera): void {}
@@ -43,6 +54,7 @@ export class Background {
 		this.drawBackgroundNoise(ctx, camera);
 
 		this.drawTrees(ctx, camera);
+		this.drawClouds(ctx, camera);
 	}
 
 	private interpolateColor(color1: string, color2: string, t: number): string {
@@ -138,6 +150,22 @@ export class Background {
 		return { noiseValue: treeNoiseValue, radius: treeRadius };
 	}
 
+	// 雲のノイズ値と半径を計算
+	private getCloudNoiseAndRadius(
+		worldX: number,
+		worldY: number,
+	): { noiseValue: number; radius: number } {
+		const cloudNoiseValue = this.cloudPerlinNoise.noise(
+			worldX * BACKGROUND_CLOUD_NOISE_SCALE,
+			worldY * BACKGROUND_CLOUD_NOISE_SCALE,
+		);
+		const cloudRadius =
+			BACKGROUND_CLOUD_RADIUS_MIN +
+			cloudNoiseValue *
+				(BACKGROUND_CLOUD_RADIUS_MAX - BACKGROUND_CLOUD_RADIUS_MIN);
+		return { noiseValue: cloudNoiseValue, radius: cloudRadius };
+	}
+
 	// 海が描画可能かどうかを判定
 	public isSeaAvailable(worldX: number, worldY: number): boolean {
 		const { radius } = this.getSeaNoiseAndRadius(worldX, worldY);
@@ -154,6 +182,16 @@ export class Background {
 		return radius > BACKGROUND_TREE_RADIUS_VISIBLE;
 	}
 
+	// 雲が描画可能かどうかを判定
+	private isCloudAvailable(worldX: number, worldY: number): boolean {
+		if (this.isSeaAvailable(worldX, worldY)) {
+			return false; // 海の上には雲を描画しない
+		}
+
+		const { radius } = this.getCloudNoiseAndRadius(worldX, worldY);
+		return radius > BACKGROUND_CLOUD_RADIUS_VISIBLE;
+	}
+
 	// 道路が描画可能かどうかを判定
 	private isRoadAvailable(worldX: number, worldY: number): boolean {
 		if (this.isSeaAvailable(worldX, worldY)) {
@@ -161,7 +199,7 @@ export class Background {
 		}
 
 		const { noiseValue } = this.getTreeNoiseAndRadius(worldX, worldY);
-		const transformedNoise = Math.abs((noiseValue * 2) - 1);
+		const transformedNoise = Math.abs(noiseValue * 2 - 1);
 		return transformedNoise <= BACKGROUND_ROAD_NOISE_THRESHOLD;
 	}
 
@@ -390,5 +428,131 @@ export class Background {
 
 		// 木の描画
 		this.drawTree(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
+	}
+
+	private drawCloudShadow(
+		ctx: CanvasRenderingContext2D,
+		camera: Camera,
+		minGridX: number,
+		maxGridX: number,
+		minGridY: number,
+		maxGridY: number,
+	): void {
+		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
+			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
+				const worldX = gridX * BACKGROUND_GRID_SPACING;
+				const worldY = gridY * BACKGROUND_GRID_SPACING;
+
+				if (!this.isCloudAvailable(worldX, worldY)) continue;
+
+				const { radius: cloudRadius } = this.getCloudNoiseAndRadius(
+					worldX,
+					worldY,
+				);
+
+				const screenPos = camera.worldToScreen({ x: worldX, y: worldY });
+
+				if (
+					screenPos.x >= -cloudRadius &&
+					screenPos.x <= CANVAS_WIDTH + cloudRadius &&
+					screenPos.y >= -cloudRadius &&
+					screenPos.y <= CANVAS_HEIGHT + cloudRadius
+				) {
+					const shadowPosX = screenPos.x + BACKGROUND_CLOUD_SHADOW_OFFSET_X;
+					const shadowPosY = screenPos.y + BACKGROUND_CLOUD_SHADOW_OFFSET_Y;
+
+					const shadowWorldPos = camera.screenToWorld({
+						x: shadowPosX,
+						y: shadowPosY,
+					});
+					const isOverSea = this.isSeaAvailable(
+						shadowWorldPos.x,
+						shadowWorldPos.y,
+					);
+
+					ctx.beginPath();
+					ctx.arc(shadowPosX, shadowPosY, cloudRadius, 0, Math.PI * 2);
+					ctx.fillStyle = isOverSea
+						? "rgba(255, 255, 255, 0.3)"
+						: BACKGROUND_CLOUD_SHADOW_COLOR;
+					ctx.fill();
+					ctx.closePath();
+				}
+			}
+		}
+	}
+
+	private drawCloud(
+		ctx: CanvasRenderingContext2D,
+		camera: Camera,
+		minGridX: number,
+		maxGridX: number,
+		minGridY: number,
+		maxGridY: number,
+	): void {
+		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
+			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
+				const worldX = gridX * BACKGROUND_GRID_SPACING;
+				const worldY = gridY * BACKGROUND_GRID_SPACING;
+
+				if (!this.isCloudAvailable(worldX, worldY)) continue;
+
+				const { radius: cloudRadius } = this.getCloudNoiseAndRadius(
+					worldX,
+					worldY,
+				);
+
+				const fastCameraY =
+					camera.position.y * BACKGROUND_CLOUD_SCROLL_SPEED_MULTIPLIER;
+				const cloudScreenPos = {
+					x: worldX - camera.position.x,
+					y: worldY - fastCameraY,
+				};
+
+				if (
+					cloudScreenPos.x >= -cloudRadius &&
+					cloudScreenPos.x <= CANVAS_WIDTH + cloudRadius &&
+					cloudScreenPos.y >= -cloudRadius &&
+					cloudScreenPos.y <= CANVAS_HEIGHT + cloudRadius
+				) {
+					ctx.beginPath();
+					ctx.arc(
+						cloudScreenPos.x,
+						cloudScreenPos.y,
+						cloudRadius,
+						0,
+						Math.PI * 2,
+					);
+					ctx.fillStyle = BACKGROUND_CLOUD_COLOR;
+					ctx.fill();
+					ctx.closePath();
+				}
+			}
+		}
+	}
+
+	private drawClouds(ctx: CanvasRenderingContext2D, camera: Camera): void {
+		const gridSpacing = BACKGROUND_GRID_SPACING;
+
+		const topLeft = camera.screenToWorld({ x: 0, y: 0 });
+		const bottomRight = camera.screenToWorld({
+			x: CANVAS_WIDTH,
+			y: CANVAS_HEIGHT,
+		});
+
+		const margin = gridSpacing * 3;
+		const minLocalX = topLeft.x - margin;
+		const maxLocalX = bottomRight.x + margin;
+		const minLocalY = topLeft.y - margin;
+		const maxLocalY = bottomRight.y + margin;
+
+		const minGridX = Math.floor(minLocalX / gridSpacing);
+		const maxGridX = Math.ceil(maxLocalX / gridSpacing);
+		const minGridY = Math.floor(minLocalY / gridSpacing);
+		const maxGridY = Math.ceil(maxLocalY / gridSpacing);
+
+		this.drawCloudShadow(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
+
+		this.drawCloud(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
 	}
 }
