@@ -1,6 +1,8 @@
 import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
+	GAMEOVER_BUTTON_Y,
+	GAMEOVER_TEXT_Y,
 	GAMEOVER_BACKGROUND_COLOR,
 	HIGH_SCORE_DISPLAY_FONT,
 	HIGH_SCORE_DISPLAY_COLOR,
@@ -20,7 +22,7 @@ export class GameOverScene extends BaseScene {
 
 		this.replayButtonBounds = {
 			x: CANVAS_WIDTH / 2 - 100,
-			y: CANVAS_HEIGHT / 2 + 20,
+			y: GAMEOVER_BUTTON_Y,
 			width: 200,
 			height: 60,
 		};
@@ -36,7 +38,7 @@ export class GameOverScene extends BaseScene {
 		ctx.fillStyle = "#FFFFFF";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
-		ctx.fillText("GAME OVER", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 50);
+		ctx.fillText("GAME OVER", CANVAS_WIDTH / 2, GAMEOVER_TEXT_Y);
 
 		ctx.fillStyle = "#4CAF50";
 		ctx.fillRect(
