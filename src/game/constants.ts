@@ -51,6 +51,10 @@ export const BACKGROUND_SEA_NOISE_SCALE = 0.001;
 export const BACKGROUND_BEACH_COLOR = "#FFD7A0"; // 薄橙色
 export const BACKGROUND_BEACH_RADIUS_FACTOR = 2.0; // 海の半径に対する倍率
 
+export const BACKGROUND_ROAD_COLOR = "#FFD7A0"; // 薄橙色（砂浜と同じ）
+export const BACKGROUND_ROAD_RADIUS = 50;
+export const BACKGROUND_ROAD_NOISE_THRESHOLD = 0.3; // ノイズ値の絶対値がこの値以下で道路を描画
+
 export const KEY_SPACE = " ";
 
 export const READY_DISPLAY_DURATION = 3; // seconds
