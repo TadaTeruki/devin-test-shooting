@@ -36,7 +36,7 @@ export class SceneManager {
 	}
 
 	handleClick(x: number, y: number): void {
-		console.log("SceneManager handleClick", x, y, this.currentScene);
+
 		if (this.currentScene) {
 			this.currentScene.handleClick(x, y);
 		}

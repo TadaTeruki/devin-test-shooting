@@ -39,7 +39,6 @@ export class TitleScene extends BaseScene {
 		this.playerImage = new Image();
 		this.playerImage.src = PLAYER_IMAGE_PATH;
 		this.playerImage.onload = () => {
-			console.log("Player image loaded successfully");
 		};
 
 		const soundManager = SoundManager.getInstance();
@@ -55,7 +54,6 @@ export class TitleScene extends BaseScene {
 
 		document.addEventListener("keydown", (e) => {
 			if (e.key === "Enter") {
-				console.log("Enter key pressed - starting game");
 				this.onStart();
 			}
 		});
@@ -129,7 +127,7 @@ export class TitleScene extends BaseScene {
 			HIGH_SCORE_DISPLAY_Y,
 		);
 
-		console.log("Button position:", this.startButtonBounds);
+
 	}
 
 	handleMouseMove(_x: number, _y: number): void {}
@@ -137,7 +135,7 @@ export class TitleScene extends BaseScene {
 	handleKeyDown(_key: string): void {}
 
 	handleClick(x: number, y: number): void {
-		console.log("TitleScene handleClick", x, y, this.startButtonBounds);
+
 
 		const expandedBounds = {
 			x: this.startButtonBounds.x - 50,
@@ -151,19 +149,12 @@ export class TitleScene extends BaseScene {
 		const isInButtonY =
 			y >= expandedBounds.y && y <= expandedBounds.y + expandedBounds.height;
 
-		console.log("Button bounds check:", {
-			isInButtonX,
-			isInButtonY,
-			expandedBounds,
-		});
+
 
 		if (isInButtonX && isInButtonY) {
-			console.log("Start button clicked! Calling onStart...");
 			const soundManager = SoundManager.getInstance();
 			soundManager.playSound("button-click", 0.1);
 			this.onStart();
-		} else {
-			console.log("Click outside button bounds");
 		}
 	}
 }

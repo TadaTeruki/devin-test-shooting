@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const game = new Game("gameCanvas");
 		game.startGame();
 
-		console.log("Game initialized successfully");
+
 	} catch (error) {
 		console.error("Failed to initialize game:", error);
 	}

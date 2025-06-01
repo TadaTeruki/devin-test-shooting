@@ -698,6 +698,6 @@ export class GameScene extends BaseScene {
 		this.specialAttackKillCount = 0;
 
 		const soundManager = SoundManager.getInstance();
-		soundManager.playBGM("bgm", 0.2);
+		soundManager.playBGM("bgm");
 	}
 }

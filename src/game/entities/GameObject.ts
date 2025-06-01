@@ -68,7 +68,6 @@ export abstract class GameObject implements IGameObject, Collidable {
 			ctx.beginPath();
 			ctx.arc(shadowX, shadowY, this.radius, 0, Math.PI * 2);
 			if (isOverSea) {
-				console.log("Drawing shadow over sea, using SHADOW_COLOR");
 				ctx.fillStyle = SHADOW_COLOR;
 			} else {
 				ctx.fillStyle = "#000000";

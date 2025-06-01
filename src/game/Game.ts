@@ -116,7 +116,7 @@ export class Game {
 		this.gameState = GameState.Playing;
 
 		const soundManager = SoundManager.getInstance();
-		soundManager.playBGM("bgm", 0.2);
+		soundManager.playBGM("bgm");
 
 		const gameScene = new GameScene(() => {
 			this.gameState = GameState.GameOver;
@@ -154,7 +154,7 @@ export class Game {
 		const x = event.clientX - rect.left;
 		const y = event.clientY - rect.top;
 
-		console.log("Game handleClick", x, y, this.gameState);
+
 		this.sceneManager.handleClick(x, y);
 	}
 }
