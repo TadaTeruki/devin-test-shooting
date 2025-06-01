@@ -1,6 +1,7 @@
 import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
+	PLAYER_IMAGE_PATH,
 	HIGH_SCORE_DISPLAY_FONT,
 	HIGH_SCORE_DISPLAY_COLOR,
 	HIGH_SCORE_DISPLAY_X,
@@ -8,7 +9,6 @@ import {
 	TITLE_BACKGROUND_COLOR,
 	TITLE_PLAYER_POSITION_RATIO,
 	TITLE_UI_Y_RATIO,
-	PLAYER_IMAGE_PATH,
 } from "../constants";
 import { HighScoreManager } from "../utils/HighScoreManager";
 
