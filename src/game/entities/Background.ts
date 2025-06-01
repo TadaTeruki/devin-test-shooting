@@ -161,7 +161,8 @@ export class Background {
 		}
 
 		const { noiseValue } = this.getTreeNoiseAndRadius(worldX, worldY);
-		return Math.abs(noiseValue - 0.5) <= BACKGROUND_ROAD_NOISE_THRESHOLD;
+		const transformedNoise = Math.abs((noiseValue * 2) - 1);
+		return transformedNoise <= BACKGROUND_ROAD_NOISE_THRESHOLD;
 	}
 
 	// ビーチの描画
