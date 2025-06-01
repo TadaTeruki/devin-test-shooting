@@ -2,9 +2,14 @@ import { Camera } from "../camera/Camera";
 import { HighScoreManager } from "../utils/HighScoreManager";
 import {
 	CANVAS_WIDTH,
-	ENEMY_COLOR,
-	ENEMY_RADIUS,
+
 	ENEMY_SPAWN_INTERVAL,
+	ENEMY_NORMAL_COLOR,
+	ENEMY_FAST_COLOR,
+	ENEMY_HEAVY_COLOR,
+	ENEMY_NORMAL_RADIUS,
+	ENEMY_FAST_RADIUS,
+	ENEMY_HEAVY_RADIUS,
 	KEY_SPACE,
 	PLAYER_BULLET_COLOR,
 	PLAYER_BULLET_RADIUS,
@@ -24,7 +29,7 @@ import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
 import { Enemy } from "../entities/Enemy";
 import { Player } from "../entities/Player";
-import { BulletType, GameState } from "../interfaces";
+import { BulletType, GameState, EnemyType } from "../interfaces";
 import type { Vector2D } from "../interfaces";
 import { BaseScene } from "./BaseScene";
 
@@ -175,24 +180,15 @@ export class GameScene extends BaseScene {
 		return Math.min(elapsedSeconds / maxScaleTime, 1);
 	}
 
-	private getEnemyRadiusRange(difficultyScale: number): {
-		min: number;
-		max: number;
-	} {
-		const baseRadius = ENEMY_RADIUS;
-		return {
-			min: baseRadius,
-			max: baseRadius * (1 + difficultyScale), // 最大2倍
-		};
-	}
+
 
 	private spawnEnemy(): void {
 		const currentTime = Date.now();
 		const difficultyScale = this.getDifficultyScale(currentTime);
-		const radiusRange = this.getEnemyRadiusRange(difficultyScale);
-
-		const radius =
-			radiusRange.min + Math.random() * (radiusRange.max - radiusRange.min);
+		
+		const enemyType = this.getRandomEnemyType();
+		const radius = this.getRadiusForEnemyType(enemyType, difficultyScale);
+		const color = this.getColorForEnemyType(enemyType);
 
 		const position: Vector2D = {
 			x: Math.random() * (CANVAS_WIDTH - radius * 2) + radius,
@@ -202,9 +198,10 @@ export class GameScene extends BaseScene {
 		const enemy = new Enemy(
 			position,
 			radius,
-			ENEMY_COLOR,
+			color,
 			this.enemyBullets,
 			this.gameStartTime,
+			enemyType,
 		);
 		this.enemies.push(enemy);
 	}
@@ -261,8 +258,11 @@ export class GameScene extends BaseScene {
 
 				if (bullet.isColliding(enemy)) {
 					bullet.isActive = false;
-					enemy.isActive = false;
-					this.score += SCORE_PER_ENEMY;
+					const isDestroyed = enemy.takeDamage();
+					if (isDestroyed) {
+						enemy.isActive = false;
+						this.score += SCORE_PER_ENEMY;
+					}
 					break;
 				}
 			}
@@ -273,6 +273,37 @@ export class GameScene extends BaseScene {
 		this.enemies = this.enemies.filter((enemy) => enemy.isActive);
 		this.playerBullets = this.playerBullets.filter((bullet) => bullet.isActive);
 		this.enemyBullets = this.enemyBullets.filter((bullet) => bullet.isActive);
+	}
+
+	private getRandomEnemyType(): EnemyType {
+		const rand = Math.random();
+		if (rand < 0.1) {
+			return EnemyType.Heavy;
+		} else if (rand < 0.55) {
+			return EnemyType.Fast;
+		} else {
+			return EnemyType.Normal;
+		}
+	}
+
+	private getRadiusForEnemyType(type: EnemyType, difficultyScale: number): number {
+		let baseRadius: number;
+		switch (type) {
+			case EnemyType.Normal: baseRadius = ENEMY_NORMAL_RADIUS; break;
+			case EnemyType.Fast: baseRadius = ENEMY_FAST_RADIUS; break;
+			case EnemyType.Heavy: baseRadius = ENEMY_HEAVY_RADIUS; break;
+			default: baseRadius = ENEMY_NORMAL_RADIUS;
+		}
+		return baseRadius * (1 + difficultyScale * 0.5);
+	}
+
+	private getColorForEnemyType(type: EnemyType): string {
+		switch (type) {
+			case EnemyType.Normal: return ENEMY_NORMAL_COLOR;
+			case EnemyType.Fast: return ENEMY_FAST_COLOR;
+			case EnemyType.Heavy: return ENEMY_HEAVY_COLOR;
+			default: return ENEMY_NORMAL_COLOR;
+		}
 	}
 
 	private gameOver(): void {
