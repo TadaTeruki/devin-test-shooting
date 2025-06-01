@@ -121,6 +121,20 @@ export const HIGH_SCORE_DISPLAY_COLOR = "#FFFFFF";
 export const HIGH_SCORE_DISPLAY_X = CANVAS_WIDTH / 2;
 export const HIGH_SCORE_DISPLAY_Y = CANVAS_HEIGHT * TITLE_UI_Y_RATIO - 10;
 
+export const TITLE_FONT = "italic 48px 'Playfair Display', serif";
+export const TITLE_START_BUTTON_FONT = "bold 24px 'Playfair Display', serif";
+export const TITLE_CONTROLS_FONT = "20px 'Playfair Display', serif";
+
+export const TITLE_OVERLAY_COLOR = "rgba(59, 66, 82, 0.7)";
+
+export const CONTROL_INSTRUCTIONS = [
+	"マウス: 移動",
+	"スペースキー: 弾発射",
+	"Pキー: 必殺技"
+];
+export const CONTROLS_START_Y = CANVAS_HEIGHT * 0.65;
+export const CONTROLS_LINE_HEIGHT = 30;
+
 export const VIEWPORT_CENTER_Y = 517.5;
 export const GAMEOVER_TEXT_Y = VIEWPORT_CENTER_Y - 50;
 export const GAMEOVER_BUTTON_Y = VIEWPORT_CENTER_Y + 20;
