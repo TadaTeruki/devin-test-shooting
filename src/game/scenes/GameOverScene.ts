@@ -1,4 +1,8 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../constants";
+import {
+	CANVAS_HEIGHT,
+	CANVAS_WIDTH,
+	GAMEOVER_BACKGROUND_COLOR,
+} from "../constants";
 import { BaseScene } from "./BaseScene";
 
 export class GameOverScene extends BaseScene {
@@ -20,6 +24,9 @@ export class GameOverScene extends BaseScene {
 	update(_deltaTime: number): void {}
 
 	draw(ctx: CanvasRenderingContext2D): void {
+		ctx.fillStyle = GAMEOVER_BACKGROUND_COLOR;
+		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
 		ctx.font = "bold 48px Arial";
 		ctx.fillStyle = "#FFFFFF";
 		ctx.textAlign = "center";
