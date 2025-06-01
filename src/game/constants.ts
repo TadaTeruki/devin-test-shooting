@@ -150,6 +150,13 @@ export const LIVES_DISPLAY_X = 40;
 export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
 
+export const PLAYER_SHOOT_SOUND_PATH = "/sounds/8bit_shoot1.mp3";
+export const ENEMY_SHOOT_SOUND_PATH = "/sounds/8bit_laser1.mp3";
+export const EXPLOSION_SOUND_PATH = "/sounds/game_explosion1.mp3";
+export const PLAYER_DAMAGE_SOUND_PATH = "/sounds/game_explosion2.mp3";
+export const ENEMY_SPAWN_SOUND_PATH = "/sounds/8bit_laser2.mp3";
+export const BUTTON_CLICK_SOUND_PATH = "/sounds/button01a.mp3";
+
 export const SPECIAL_ATTACK_CHARGE_TIME = 3000;
 export const SPECIAL_ATTACK_KEY = "p";
 export const SPECIAL_BULLET_COLOR = "#E0A700";
