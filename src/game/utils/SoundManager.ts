@@ -3,6 +3,9 @@ export class SoundManager {
 	private audioContext: AudioContext | null;
 	private soundCache: Map<string, AudioBuffer>;
 	private loadingPromises: Map<string, Promise<AudioBuffer>>;
+	private bgmSource: AudioBufferSourceNode | null = null;
+	private bgmBuffer: AudioBuffer | null = null;
+	private bgmGainNode: GainNode | null = null;
 
 	private constructor() {
 		this.audioContext = null;
@@ -97,6 +100,62 @@ export class SoundManager {
 			source.start();
 		} catch (error) {
 			console.warn(`Failed to play sound ${key}:`, error);
+		}
+	}
+
+	public async playBGM(bgmName: string, volume: number = 0.3): Promise<void> {
+		try {
+			this.stopBGM();
+			
+			const buffer = await this.loadSound(bgmName, `/sounds/${bgmName}.mp3`);
+			if (!buffer) return;
+
+			this.initAudioContext();
+			if (!this.audioContext) {
+				console.warn("Audio context not available for BGM");
+				return;
+			}
+
+			if (this.audioContext.state === 'suspended') {
+				await this.audioContext.resume();
+			}
+
+			this.bgmBuffer = buffer;
+			this.bgmGainNode = this.audioContext.createGain();
+			this.bgmGainNode.gain.value = volume;
+			this.bgmGainNode.connect(this.audioContext.destination);
+
+			this.startBGMLoop();
+		} catch (error) {
+			console.error(`Error playing BGM ${bgmName}:`, error);
+		}
+	}
+
+	private startBGMLoop(): void {
+		if (!this.bgmBuffer || !this.bgmGainNode || !this.audioContext) return;
+
+		this.bgmSource = this.audioContext.createBufferSource();
+		this.bgmSource.buffer = this.bgmBuffer;
+		this.bgmSource.loop = true;
+		this.bgmSource.connect(this.bgmGainNode);
+		this.bgmSource.start();
+	}
+
+	public stopBGM(): void {
+		if (this.bgmSource) {
+			this.bgmSource.stop();
+			this.bgmSource.disconnect();
+			this.bgmSource = null;
+		}
+		if (this.bgmGainNode) {
+			this.bgmGainNode.disconnect();
+			this.bgmGainNode = null;
+		}
+	}
+
+	public setBGMVolume(volume: number): void {
+		if (this.bgmGainNode) {
+			this.bgmGainNode.gain.value = volume;
 		}
 	}
 }

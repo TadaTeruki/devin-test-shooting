@@ -372,7 +372,7 @@ export class GameScene extends BaseScene {
 		this.enemies.push(enemy);
 		
 		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("enemy-spawn", 0.3);
+		soundManager.playSound("enemy-spawn", 0.1);
 	}
 
 	private shootPlayerBullet(): void {
@@ -408,7 +408,7 @@ export class GameScene extends BaseScene {
 		this.lastPlayerBulletTime = currentTime;
 		
 		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("player-shoot", 0.4);
+		soundManager.playSound("player-shoot", 0.1);
 	}
 
 	private checkCollisions(): void {
@@ -568,7 +568,7 @@ export class GameScene extends BaseScene {
 		
 		if (this.gameState === GameState.Playing) {
 			const soundManager = SoundManager.getInstance();
-			soundManager.playSound("explosion", 0.3);
+			soundManager.playSound("explosion", 0.1);
 		}
 	}
 
@@ -605,6 +605,9 @@ export class GameScene extends BaseScene {
 		this.specialAttackChargeTime = 0;
 		this.specialAttackFlashTimer = 0;
 		this.specialAttackKillCount = 0;
+
+		const soundManager = SoundManager.getInstance();
+		soundManager.playSound("special-attack", 0.2);
 
 		for (const enemy of this.enemies) {
 			if (!enemy.isActive) continue;
@@ -671,6 +674,7 @@ export class GameScene extends BaseScene {
 		
 		const soundManager = SoundManager.getInstance();
 		soundManager.playSound("player-damage", 0.1);
+		soundManager.stopBGM();
 	}
 
 	private resetGameState(): void {
@@ -692,5 +696,8 @@ export class GameScene extends BaseScene {
 		this.specialAttackReady = false;
 		this.specialAttackFlashTimer = 0;
 		this.specialAttackKillCount = 0;
+
+		const soundManager = SoundManager.getInstance();
+		soundManager.playBGM("bgm", 0.2);
 	}
 }

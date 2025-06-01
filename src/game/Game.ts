@@ -13,6 +13,8 @@ import {
 	ENEMY_SPAWN_SOUND_PATH,
 	BUTTON_CLICK_SOUND_PATH,
 	BUTTON_SELECT_SOUND_PATH,
+	SPECIAL_ATTACK_SOUND_PATH,
+	BGM_PATH,
 } from "./constants";
 import { GameState } from "./interfaces";
 
@@ -81,6 +83,8 @@ export class Game {
 			{ key: "enemy-spawn", src: ENEMY_SPAWN_SOUND_PATH },
 			{ key: "button-click", src: BUTTON_CLICK_SOUND_PATH },
 			{ key: "button-select", src: BUTTON_SELECT_SOUND_PATH },
+			{ key: "special-attack", src: SPECIAL_ATTACK_SOUND_PATH },
+			{ key: "bgm", src: BGM_PATH },
 		]);
 	}
 
@@ -110,6 +114,9 @@ export class Game {
 
 	resetGame(): void {
 		this.gameState = GameState.Playing;
+
+		const soundManager = SoundManager.getInstance();
+		soundManager.playBGM("bgm", 0.2);
 
 		const gameScene = new GameScene(() => {
 			this.gameState = GameState.GameOver;

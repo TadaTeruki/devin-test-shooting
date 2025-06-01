@@ -42,6 +42,9 @@ export class TitleScene extends BaseScene {
 			console.log("Player image loaded successfully");
 		};
 
+		const soundManager = SoundManager.getInstance();
+		soundManager.stopBGM();
+
 		const uiCenterY = CANVAS_HEIGHT * TITLE_UI_Y_RATIO;
 		this.startButtonBounds = {
 			x: CANVAS_WIDTH / 2 - 100,
@@ -157,7 +160,7 @@ export class TitleScene extends BaseScene {
 		if (isInButtonX && isInButtonY) {
 			console.log("Start button clicked! Calling onStart...");
 			const soundManager = SoundManager.getInstance();
-			soundManager.playSound("button-click", 0.3);
+			soundManager.playSound("button-click", 0.1);
 			this.onStart();
 		} else {
 			console.log("Click outside button bounds");

@@ -43,8 +43,8 @@ export const BACKGROUND_LEAF_COLOR_NOISE_SCALE_Y = 0.08;
 export const BACKGROUND_NOISE_SCALE_X = 0.02;
 export const BACKGROUND_NOISE_SCALE_Y = 0.08;
 
-export const SHADOW_OFFSET_X = 30;
-export const SHADOW_OFFSET_Y = 30;
+export const SHADOW_OFFSET_X = 50;
+export const SHADOW_OFFSET_Y = 50;
 export const SHADOW_COLOR = "rgba(0, 0, 0, 0.3)";
 
 export const PLAYER_IMAGE_PATH = "/assets/player.png";
@@ -75,11 +75,13 @@ export const ENEMY_HEAVY_IMAGE_PATH = "/assets/enemy-gray.png";
 
 export const PLAYER_SHOOT_SOUND_PATH = "/sounds/8bit_shoot1.mp3";
 export const ENEMY_SHOOT_SOUND_PATH = "/sounds/8bit_laser1.mp3";
-export const EXPLOSION_SOUND_PATH = "/sounds/game_explosion1.mp3";
-export const PLAYER_DAMAGE_SOUND_PATH = "/sounds/game_explosion2.mp3";
+export const EXPLOSION_SOUND_PATH = "/sounds/game_explosion6.mp3";
+export const PLAYER_DAMAGE_SOUND_PATH = "/sounds/game_explosion6.mp3";
 export const ENEMY_SPAWN_SOUND_PATH = "/sounds/8bit_laser2.mp3";
 export const BUTTON_CLICK_SOUND_PATH = "/sounds/button01a.mp3";
 export const BUTTON_SELECT_SOUND_PATH = "/sounds/select01.mp3";
+export const SPECIAL_ATTACK_SOUND_PATH = "/sounds/special_attack.mp3";
+export const BGM_PATH = "/sounds/bgm.mp3";
 
 export const ENEMY_HEAVY_BULLET_COLOR = "#8A2BE2";
 export const ENEMY_DAMAGE_FLASH_DURATION = 150;
@@ -158,7 +160,7 @@ export const LIVES_DISPLAY_X = 40;
 export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
 
-export const SPECIAL_ATTACK_CHARGE_TIME = 3000;
+export const SPECIAL_ATTACK_CHARGE_TIME = 12000;
 export const SPECIAL_ATTACK_KEY = "p";
 export const SPECIAL_BULLET_COLOR = "#F0C700";
 export const SPECIAL_BULLET_SPEED = 800;
@@ -176,10 +178,10 @@ export const CLOUD_SCROLL_SPEED = 350;
 export const CLOUD_COLOR_LIGHT = "#FFFFFF";
 export const CLOUD_COLOR_DARK = "#E8E8E8";
 export const CLOUD_OPACITY = 0.7;
-export const CLOUD_NOISE_SCALE = 0.003;
-export const CLOUD_NOISE_THRESHOLD = 0.7;
+export const CLOUD_NOISE_SCALE = 0.001;
+export const CLOUD_NOISE_THRESHOLD = 0.6;
 export const CLOUD_RADIUS_MIN = 0;
-export const CLOUD_RADIUS_MAX = 20;
+export const CLOUD_RADIUS_MAX = 30;
 export const CLOUD_RADIUS_VISIBLE = 20;
 export const CLOUD_GRID_SPACING = 15.0;
 
