@@ -6,11 +6,23 @@ import {
 	ENEMY_BULLET_SPEED,
 	ENEMY_IMAGE_PATH,
 	ENEMY_MAX_SCALE_TIME,
-	ENEMY_SHOOT_INTERVAL,
-	ENEMY_SPEED,
+	ENEMY_NORMAL_HEALTH,
+	ENEMY_FAST_HEALTH,
+	ENEMY_HEAVY_HEALTH,
+	ENEMY_NORMAL_SPEED,
+	ENEMY_FAST_SPEED,
+	ENEMY_HEAVY_SPEED,
+	ENEMY_NORMAL_SHOOT_INTERVAL,
+	ENEMY_FAST_SHOOT_INTERVAL,
+	ENEMY_HEAVY_SHOOT_INTERVAL,
+	ENEMY_FAST_IMAGE_PATH,
+	ENEMY_HEAVY_IMAGE_PATH,
+	ENEMY_HEAVY_BULLET_COLOR,
+	ENEMY_DAMAGE_FLASH_DURATION,
+	ENEMY_DAMAGE_FLASH_COLOR,
 } from "../constants";
 import type { Vector2D } from "../interfaces";
-import { BulletType } from "../interfaces";
+import { BulletType, EnemyType } from "../interfaces";
 import { ImageManager } from "../utils/ImageManager";
 import { Bullet } from "./Bullet";
 import { GameObject } from "./GameObject";
@@ -20,6 +32,11 @@ export class Enemy extends GameObject {
 	lastShootTime: number;
 	bullets: Bullet[];
 	gameStartTime: number;
+	enemyType: EnemyType;
+	health: number;
+	maxHealth: number;
+	damageFlashTime: number;
+	originalColor: string;
 
 	constructor(
 		position: Vector2D,
@@ -27,29 +44,39 @@ export class Enemy extends GameObject {
 		color: string,
 		bullets: Bullet[],
 		gameStartTime: number,
+		enemyType: EnemyType,
 	) {
 		super(position, radius, color);
 
+		this.enemyType = enemyType;
+		this.maxHealth = this.getHealthForType(enemyType);
+		this.health = this.maxHealth;
+		this.damageFlashTime = 0;
+		this.originalColor = color;
+
+		const speed = this.getSpeedForType(enemyType);
 		this.velocity = {
-			x: (Math.random() - 0.5) * ENEMY_SPEED,
-			y: Math.random() * ENEMY_SPEED * 0.5 + ENEMY_SPEED * 0.3, // 下向きの速度
+			x: (Math.random() - 0.5) * speed,
+			y: Math.random() * speed * 0.5 + speed * 0.3,
 		};
 
 		this.lastShootTime = 0;
 		this.bullets = bullets;
 		this.gameStartTime = gameStartTime;
-
 		this.hasShadow = true;
 
 		const imageManager = ImageManager.getInstance();
+		const imagePath = this.getImagePathForType(enemyType);
+		const imageKey = this.getImageKeyForType(enemyType);
+		
 		imageManager
-			.loadImage("enemy", ENEMY_IMAGE_PATH)
+			.loadImage(imageKey, imagePath)
 			.then((img) => {
 				this.image = img;
 				this.imageLoaded = true;
 			})
 			.catch((error) => {
-				console.error("Failed to load enemy image:", error);
+				console.error(`Failed to load enemy image for type ${enemyType}:`, error);
 			});
 	}
 
@@ -69,6 +96,13 @@ export class Enemy extends GameObject {
 		if (this.position.y - this.radius > CANVAS_HEIGHT) {
 			this.isActive = false;
 		}
+
+		if (this.damageFlashTime > 0) {
+			this.damageFlashTime -= deltaTime * 1000;
+			if (this.damageFlashTime <= 0) {
+				this.color = this.originalColor;
+			}
+		}
 	}
 
 	private getDifficultyScale(currentTime: number): number {
@@ -86,7 +120,8 @@ export class Enemy extends GameObject {
 	shoot(playerPosition: Vector2D, currentTime: number): Bullet | null {
 		if (!this.isActive) return null;
 
-		const scaledInterval = ENEMY_SHOOT_INTERVAL * this.getShootIntervalScale();
+		const baseInterval = this.getShootIntervalForType(this.enemyType);
+		const scaledInterval = baseInterval * this.getShootIntervalScale();
 
 		if (currentTime - this.lastShootTime < scaledInterval) return null;
 
@@ -96,19 +131,90 @@ export class Enemy extends GameObject {
 		const dy = playerPosition.y - this.position.y;
 		const distance = Math.sqrt(dx * dx + dy * dy);
 
-		const bulletVelocity: Vector2D = {
-			x: (dx / distance) * ENEMY_BULLET_SPEED,
-			y: (dy / distance) * ENEMY_BULLET_SPEED,
-		};
+		let bulletVelocity: Vector2D;
+		
+		if (this.enemyType === EnemyType.Heavy) {
+			const trackingStrength = 0.3;
+			const normalizedDx = dx / distance;
+			const normalizedDy = dy / distance;
+			
+			bulletVelocity = {
+				x: normalizedDx * ENEMY_BULLET_SPEED * (1 + trackingStrength),
+				y: normalizedDy * ENEMY_BULLET_SPEED * (1 + trackingStrength),
+			};
+		} else {
+			bulletVelocity = {
+				x: (dx / distance) * ENEMY_BULLET_SPEED,
+				y: (dy / distance) * ENEMY_BULLET_SPEED,
+			};
+		}
+
+		const bulletColor = this.enemyType === EnemyType.Heavy ? ENEMY_HEAVY_BULLET_COLOR : ENEMY_BULLET_COLOR;
 
 		const bullet = new Bullet(
 			{ x: this.position.x, y: this.position.y },
 			ENEMY_BULLET_RADIUS,
-			ENEMY_BULLET_COLOR,
+			bulletColor,
 			bulletVelocity,
 			BulletType.Enemy,
 		);
 
 		return bullet;
+	}
+
+	private getHealthForType(type: EnemyType): number {
+		switch (type) {
+			case EnemyType.Normal: return ENEMY_NORMAL_HEALTH;
+			case EnemyType.Fast: return ENEMY_FAST_HEALTH;
+			case EnemyType.Heavy: return ENEMY_HEAVY_HEALTH;
+			default: return ENEMY_NORMAL_HEALTH;
+		}
+	}
+
+	private getSpeedForType(type: EnemyType): number {
+		switch (type) {
+			case EnemyType.Normal: return ENEMY_NORMAL_SPEED;
+			case EnemyType.Fast: return ENEMY_FAST_SPEED;
+			case EnemyType.Heavy: return ENEMY_HEAVY_SPEED;
+			default: return ENEMY_NORMAL_SPEED;
+		}
+	}
+
+	private getShootIntervalForType(type: EnemyType): number {
+		switch (type) {
+			case EnemyType.Normal: return ENEMY_NORMAL_SHOOT_INTERVAL;
+			case EnemyType.Fast: return ENEMY_FAST_SHOOT_INTERVAL;
+			case EnemyType.Heavy: return ENEMY_HEAVY_SHOOT_INTERVAL;
+			default: return ENEMY_NORMAL_SHOOT_INTERVAL;
+		}
+	}
+
+	private getImagePathForType(type: EnemyType): string {
+		switch (type) {
+			case EnemyType.Normal: return ENEMY_IMAGE_PATH;
+			case EnemyType.Fast: return ENEMY_FAST_IMAGE_PATH;
+			case EnemyType.Heavy: return ENEMY_HEAVY_IMAGE_PATH;
+			default: return ENEMY_IMAGE_PATH;
+		}
+	}
+
+	private getImageKeyForType(type: EnemyType): string {
+		switch (type) {
+			case EnemyType.Normal: return "enemy";
+			case EnemyType.Fast: return "enemy-fast";
+			case EnemyType.Heavy: return "enemy-heavy";
+			default: return "enemy";
+		}
+	}
+
+	public takeDamage(): boolean {
+		this.health--;
+		
+		if (this.maxHealth >= 2 && this.health > 0) {
+			this.damageFlashTime = ENEMY_DAMAGE_FLASH_DURATION;
+			this.color = ENEMY_DAMAGE_FLASH_COLOR;
+		}
+		
+		return this.health <= 0;
 	}
 }

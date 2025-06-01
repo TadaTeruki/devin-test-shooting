@@ -3,6 +3,8 @@ import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
 	ENEMY_IMAGE_PATH,
+	ENEMY_FAST_IMAGE_PATH,
+	ENEMY_HEAVY_IMAGE_PATH,
 	PLAYER_IMAGE_PATH,
 } from "./constants";
 import { GameState } from "./interfaces";
@@ -55,6 +57,8 @@ export class Game {
 		return imageManager.preloadImages([
 			{ key: "player", src: PLAYER_IMAGE_PATH },
 			{ key: "enemy", src: ENEMY_IMAGE_PATH },
+			{ key: "enemy-fast", src: ENEMY_FAST_IMAGE_PATH },
+			{ key: "enemy-heavy", src: ENEMY_HEAVY_IMAGE_PATH },
 		]);
 	}
 

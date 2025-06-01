@@ -42,6 +42,42 @@ export const SHADOW_COLOR = "rgba(0, 0, 0, 0.3)";
 
 export const PLAYER_IMAGE_PATH = "/assets/player.png";
 export const ENEMY_IMAGE_PATH = "/assets/enemy.png";
+
+export const ENEMY_NORMAL_COLOR = "#00FF00";
+export const ENEMY_FAST_COLOR = "#8A2BE2";
+export const ENEMY_HEAVY_COLOR = "#808080";
+
+export const ENEMY_NORMAL_SPEED = ENEMY_SPEED;
+export const ENEMY_FAST_SPEED = ENEMY_SPEED * 2;
+export const ENEMY_HEAVY_SPEED = ENEMY_SPEED;
+
+export const ENEMY_NORMAL_SHOOT_INTERVAL = ENEMY_SHOOT_INTERVAL;
+export const ENEMY_FAST_SHOOT_INTERVAL = ENEMY_SHOOT_INTERVAL * 2;
+export const ENEMY_HEAVY_SHOOT_INTERVAL = ENEMY_SHOOT_INTERVAL * 0.5;
+
+export const ENEMY_NORMAL_RADIUS = ENEMY_RADIUS;
+export const ENEMY_FAST_RADIUS = ENEMY_RADIUS;
+export const ENEMY_HEAVY_RADIUS = ENEMY_RADIUS * 1.5;
+
+export const ENEMY_NORMAL_HEALTH = 1;
+export const ENEMY_FAST_HEALTH = 1;
+export const ENEMY_HEAVY_HEALTH = 5;
+
+export const ENEMY_FAST_IMAGE_PATH = "/assets/enemy-purple.png";
+export const ENEMY_HEAVY_IMAGE_PATH = "/assets/enemy-gray.png";
+
+export const ENEMY_HEAVY_BULLET_COLOR = "#8A2BE2";
+export const ENEMY_DAMAGE_FLASH_DURATION = 150;
+export const ENEMY_DAMAGE_FLASH_COLOR = "#FFFFFF";
+
+export const PARTICLE_LIFETIME = 1000;
+export const PARTICLE_COUNT_MIN = 5;
+export const PARTICLE_COUNT_MAX = 8;
+export const PARTICLE_SPEED_MIN = 50;
+export const PARTICLE_SPEED_MAX = 150;
+export const PARTICLE_RADIUS_MIN = 3;
+export const PARTICLE_RADIUS_MAX = 8;
+export const PARTICLE_COLORS = ["#FFFFFF", "#FFFF00", "#FF0000", "#FFA500"];
 export const BACKGROUND_SEA_COLOR = "#2277CC"; // 青
 export const BACKGROUND_SEA_RADIUS_MIN = 0;
 export const BACKGROUND_SEA_RADIUS_VISIBLE = 40;

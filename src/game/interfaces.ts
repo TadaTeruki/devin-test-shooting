@@ -37,3 +37,11 @@ export const BulletType = {
 } as const;
 
 export type BulletType = (typeof BulletType)[keyof typeof BulletType];
+
+export const EnemyType = {
+	Normal: 0,
+	Fast: 1,
+	Heavy: 2,
+} as const;
+
+export type EnemyType = (typeof EnemyType)[keyof typeof EnemyType];
