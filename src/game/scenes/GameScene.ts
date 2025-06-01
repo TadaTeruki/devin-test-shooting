@@ -152,7 +152,7 @@ export class GameScene extends BaseScene {
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.background.draw(ctx, this.camera);
 
-		if (this.player.shouldRender()) {
+		if (this.player.shouldRender() && !this.isGameOverOverlayVisible) {
 			this.player.draw(ctx, this.camera, this.background);
 		}
 
