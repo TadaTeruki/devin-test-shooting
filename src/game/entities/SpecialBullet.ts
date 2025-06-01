@@ -101,7 +101,7 @@ export class SpecialBullet extends Bullet {
 
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.drawBlinkingRings(ctx);
-		this.drawAfterimages(ctx);
+		this.drawSpecialAfterimages(ctx);
 		
 		ctx.beginPath();
 		ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
@@ -117,9 +117,6 @@ export class SpecialBullet extends Bullet {
 
 		if (isVisible) {
 			this.drawRingAt(ctx, this.position);
-			for (const pos of this.positionHistory) {
-				this.drawRingAt(ctx, pos);
-			}
 		}
 	}
 
@@ -131,7 +128,7 @@ export class SpecialBullet extends Bullet {
 		ctx.stroke();
 	}
 
-	private drawAfterimages(ctx: CanvasRenderingContext2D): void {
+	private drawSpecialAfterimages(ctx: CanvasRenderingContext2D): void {
 		for (let i = 0; i < this.positionHistory.length; i++) {
 			const pos = this.positionHistory[i];
 			const alpha = (i + 1) * SPECIAL_BULLET_AFTERIMAGE_ALPHA_DECAY;
