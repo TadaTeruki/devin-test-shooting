@@ -17,6 +17,7 @@ import {
 	PLAYER_BULLET_SPEED,
 	READY_DISPLAY_DURATION,
 	SCORE_PER_ENEMY,
+	SCORE_PER_HEAVY_ENEMY,
 	SCORE_DISPLAY_FONT,
 	SCORE_DISPLAY_COLOR,
 	SCORE_DISPLAY_X,
@@ -46,6 +47,7 @@ import { Cloud } from "../entities/Cloud";
 import { Enemy } from "../entities/Enemy";
 import { Particle } from "../entities/Particle";
 import { Player } from "../entities/Player";
+import { ScoreText } from "../entities/ScoreText";
 import { BulletType, GameState, EnemyType } from "../interfaces";
 import type { Vector2D } from "../interfaces";
 import { BaseScene } from "./BaseScene";
@@ -56,6 +58,7 @@ export class GameScene extends BaseScene {
 	playerBullets: Bullet[];
 	enemyBullets: Bullet[];
 	particles: Particle[];
+	scoreTexts: ScoreText[];
 	background: Background;
 	cloud: Cloud;
 	camera: Camera;
@@ -78,6 +81,7 @@ export class GameScene extends BaseScene {
 		this.playerBullets = [];
 		this.enemyBullets = [];
 		this.particles = [];
+		this.scoreTexts = [];
 		this.background = new Background();
 		this.cloud = new Cloud();
 		this.camera = new Camera();
@@ -113,6 +117,13 @@ export class GameScene extends BaseScene {
 		this.background.update(deltaTime, this.camera);
 		this.cloud.update(deltaTime);
 
+		this.player.update(deltaTime);
+
+		if (this.isReady && currentTime - this.lastEnemySpawnTime > ENEMY_SPAWN_INTERVAL) {
+			this.spawnEnemy();
+			this.lastEnemySpawnTime = currentTime;
+		}
+
 		for (const enemy of this.enemies) {
 			enemy.update(deltaTime);
 			if (this.gameState === GameState.Playing) {
@@ -135,16 +146,11 @@ export class GameScene extends BaseScene {
 			particle.update(deltaTime);
 		}
 
-		if (this.gameState === GameState.Playing) {
-			this.player.update(deltaTime);
-
-			if (currentTime - this.lastEnemySpawnTime > ENEMY_SPAWN_INTERVAL) {
-				this.spawnEnemy();
-				this.lastEnemySpawnTime = currentTime;
-			}
-
-			this.checkCollisions();
+		for (const scoreText of this.scoreTexts) {
+			scoreText.update(deltaTime);
 		}
+
+		this.checkCollisions();
 
 		this.cleanupInactiveObjects();
 	}
@@ -172,8 +178,11 @@ export class GameScene extends BaseScene {
 			particle.draw(ctx);
 		}
 
-		this.cloud.draw(ctx, this.camera);
+		for (const scoreText of this.scoreTexts) {
+			scoreText.draw(ctx);
+		}
 
+		this.cloud.draw(ctx, this.camera);
 		this.drawLives(ctx);
 
 		ctx.font = SCORE_DISPLAY_FONT;
@@ -311,6 +320,10 @@ export class GameScene extends BaseScene {
 			return;
 		}
 
+		if (!this.player.shouldRender()) {
+			return;
+		}
+
 		const bulletPosition: Vector2D = {
 			x: this.player.position.x,
 			y: this.player.position.y - this.player.radius,
@@ -371,7 +384,9 @@ export class GameScene extends BaseScene {
 					if (isDestroyed) {
 						this.spawnExplosionParticles(enemy.position);
 						enemy.isActive = false;
-						this.score += SCORE_PER_ENEMY;
+						const scoreToAdd = enemy.enemyType === EnemyType.Heavy ? SCORE_PER_HEAVY_ENEMY : SCORE_PER_ENEMY;
+						this.score += scoreToAdd;
+						this.spawnScoreText(enemy.position, scoreToAdd);
 					}
 					break;
 				}
@@ -384,17 +399,33 @@ export class GameScene extends BaseScene {
 		this.playerBullets = this.playerBullets.filter((bullet) => bullet.isActive);
 		this.enemyBullets = this.enemyBullets.filter((bullet) => bullet.isActive);
 		this.particles = this.particles.filter((particle) => particle.isActive);
+		this.scoreTexts = this.scoreTexts.filter((scoreText) => scoreText.isActive);
 	}
 
 	private getRandomEnemyType(): EnemyType {
+		const currentTime = Date.now();
+		const elapsedSeconds = (currentTime - this.gameStartTime) / 1000;
+		
 		const rand = Math.random();
-		if (rand < 0.1) {
-			return EnemyType.Heavy;
-		} else if (rand < 0.55) {
-			return EnemyType.Fast;
-		} else {
+		
+		if (elapsedSeconds < 15) {
 			return EnemyType.Normal;
 		}
+		
+		if (elapsedSeconds < 30) {
+			if (rand < 0.55) {
+				return EnemyType.Fast;
+			}
+			return EnemyType.Normal;
+		}
+		
+		if (rand < 0.1) {
+			return EnemyType.Heavy;
+		}
+		if (rand < 0.4) {
+			return EnemyType.Fast;
+		}
+		return EnemyType.Normal;
 	}
 
 	private getRadiusForEnemyType(type: EnemyType, difficultyScale: number): number {
@@ -442,6 +473,11 @@ export class GameScene extends BaseScene {
 
 			this.particles.push(particle);
 		}
+	}
+
+	private spawnScoreText(position: Vector2D, score: number): void {
+		const scoreText = new ScoreText(position, score, 500);
+		this.scoreTexts.push(scoreText);
 	}
 
 	private drawLives(ctx: CanvasRenderingContext2D): void {
