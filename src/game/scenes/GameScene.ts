@@ -554,7 +554,7 @@ export class GameScene extends BaseScene {
 				PLAYER_BULLET_RADIUS,
 				SPECIAL_BULLET_COLOR,
 				bulletVelocity,
-				this.enemies
+				[enemy]
 			);
 
 			this.specialBullets.push(specialBullet);
@@ -588,7 +588,7 @@ export class GameScene extends BaseScene {
 		ctx.fillStyle = "#FFFFFF";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "bottom";
-		ctx.fillText("SPECIAL", SPECIAL_GAUGE_X + SPECIAL_GAUGE_WIDTH / 2, SPECIAL_GAUGE_Y - 5);
+		ctx.fillText("SPECIAL [Press P Key]", SPECIAL_GAUGE_X + SPECIAL_GAUGE_WIDTH / 2, SPECIAL_GAUGE_Y - 5);
 	}
 
 	private gameOver(): void {
@@ -601,6 +601,7 @@ export class GameScene extends BaseScene {
 		this.enemies = [];
 		this.playerBullets = [];
 		this.enemyBullets = [];
+		this.specialBullets = [];
 		this.particles = [];
 		this.player = new Player();
 		this.score = 0;
@@ -611,5 +612,8 @@ export class GameScene extends BaseScene {
 		this.isGameOverOverlayVisible = false;
 		this.isReady = false;
 		this.readyElapsedTime = 0;
+		this.specialAttackChargeTime = 0;
+		this.specialAttackReady = false;
+		this.specialAttackFlashTimer = 0;
 	}
 }

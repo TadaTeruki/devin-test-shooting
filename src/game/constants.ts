@@ -136,9 +136,9 @@ export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
 
 export const SPECIAL_ATTACK_CHARGE_TIME = 30000;
-export const SPECIAL_ATTACK_KEY = "x";
+export const SPECIAL_ATTACK_KEY = "p";
 export const SPECIAL_BULLET_COLOR = "#FFD700";
-export const SPECIAL_BULLET_SPEED = 400;
+export const SPECIAL_BULLET_SPEED = 800;
 export const SPECIAL_BULLET_HOMING_RATIO = 0.1;
 export const SPECIAL_GAUGE_WIDTH = 200;
 export const SPECIAL_GAUGE_HEIGHT = 20;
