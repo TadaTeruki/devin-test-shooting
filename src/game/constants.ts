@@ -80,6 +80,8 @@ export const PLAYER_DAMAGE_SOUND_PATH = "/sounds/game_explosion2.mp3";
 export const ENEMY_SPAWN_SOUND_PATH = "/sounds/8bit_laser2.mp3";
 export const BUTTON_CLICK_SOUND_PATH = "/sounds/button01a.mp3";
 export const BUTTON_SELECT_SOUND_PATH = "/sounds/select01.mp3";
+export const SPECIAL_ATTACK_SOUND_PATH = "/sounds/special_attack.mp3";
+export const BGM_PATH = "/sounds/bgm.mp3";
 
 export const ENEMY_HEAVY_BULLET_COLOR = "#8A2BE2";
 export const ENEMY_DAMAGE_FLASH_DURATION = 150;

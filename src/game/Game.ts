@@ -13,6 +13,8 @@ import {
 	ENEMY_SPAWN_SOUND_PATH,
 	BUTTON_CLICK_SOUND_PATH,
 	BUTTON_SELECT_SOUND_PATH,
+	SPECIAL_ATTACK_SOUND_PATH,
+	BGM_PATH,
 } from "./constants";
 import { GameState } from "./interfaces";
 
@@ -54,7 +56,10 @@ export class Game {
 		window.addEventListener("keydown", this.handleKeyDown.bind(this));
 
 		this.preloadImages();
-		this.preloadSounds();
+		this.preloadSounds().then(() => {
+			const soundManager = SoundManager.getInstance();
+			soundManager.playBGM("bgm", 0.2);
+		});
 		this.startFromTitle();
 	}
 
@@ -81,6 +86,8 @@ export class Game {
 			{ key: "enemy-spawn", src: ENEMY_SPAWN_SOUND_PATH },
 			{ key: "button-click", src: BUTTON_CLICK_SOUND_PATH },
 			{ key: "button-select", src: BUTTON_SELECT_SOUND_PATH },
+			{ key: "special-attack", src: SPECIAL_ATTACK_SOUND_PATH },
+			{ key: "bgm", src: BGM_PATH },
 		]);
 	}
 
