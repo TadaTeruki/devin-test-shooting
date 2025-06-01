@@ -481,8 +481,10 @@ export class GameScene extends BaseScene {
 			this.particles.push(particle);
 		}
 		
-		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("explosion", 0.6);
+		if (this.gameState === GameState.Playing) {
+			const soundManager = SoundManager.getInstance();
+			soundManager.playSound("explosion", 0.3);
+		}
 	}
 
 	private spawnScoreText(position: Vector2D, score: number): void {
@@ -519,7 +521,7 @@ export class GameScene extends BaseScene {
 		this.isGameOverOverlayVisible = true;
 		
 		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("player-damage", 0.8);
+		soundManager.playSound("player-damage", 0.4);
 	}
 
 	private resetGameState(): void {

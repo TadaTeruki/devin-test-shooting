@@ -100,7 +100,7 @@ export class Player extends GameObject {
 		this.lives--;
 		
 		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("player-damage", 0.7);
+		soundManager.playSound("player-damage", 0.3);
 		
 		if (this.lives > 0) {
 			this.respawnTimer = PLAYER_RESPAWN_TIME;
