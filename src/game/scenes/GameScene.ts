@@ -655,8 +655,11 @@ export class GameScene extends BaseScene {
 		this.gameState = GameState.GameOver;
 		this.isGameOverOverlayVisible = true;
 		
+		this.player.position.x = -Infinity;
+		this.player.position.y = -Infinity;
+		
 		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("player-damage", 0.4);
+		soundManager.playSound("player-damage", 0.1);
 	}
 
 	private resetGameState(): void {
