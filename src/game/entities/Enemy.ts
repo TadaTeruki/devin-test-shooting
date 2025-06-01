@@ -17,6 +17,9 @@ import {
 	ENEMY_HEAVY_SHOOT_INTERVAL,
 	ENEMY_FAST_IMAGE_PATH,
 	ENEMY_HEAVY_IMAGE_PATH,
+	ENEMY_HEAVY_BULLET_COLOR,
+	ENEMY_DAMAGE_FLASH_DURATION,
+	ENEMY_DAMAGE_FLASH_COLOR,
 } from "../constants";
 import type { Vector2D } from "../interfaces";
 import { BulletType, EnemyType } from "../interfaces";
@@ -32,6 +35,8 @@ export class Enemy extends GameObject {
 	enemyType: EnemyType;
 	health: number;
 	maxHealth: number;
+	damageFlashTime: number;
+	originalColor: string;
 
 	constructor(
 		position: Vector2D,
@@ -46,6 +51,8 @@ export class Enemy extends GameObject {
 		this.enemyType = enemyType;
 		this.maxHealth = this.getHealthForType(enemyType);
 		this.health = this.maxHealth;
+		this.damageFlashTime = 0;
+		this.originalColor = color;
 
 		const speed = this.getSpeedForType(enemyType);
 		this.velocity = {
@@ -89,6 +96,13 @@ export class Enemy extends GameObject {
 		if (this.position.y - this.radius > CANVAS_HEIGHT) {
 			this.isActive = false;
 		}
+
+		if (this.damageFlashTime > 0) {
+			this.damageFlashTime -= deltaTime * 1000;
+			if (this.damageFlashTime <= 0) {
+				this.color = this.originalColor;
+			}
+		}
 	}
 
 	private getDifficultyScale(currentTime: number): number {
@@ -117,15 +131,30 @@ export class Enemy extends GameObject {
 		const dy = playerPosition.y - this.position.y;
 		const distance = Math.sqrt(dx * dx + dy * dy);
 
-		const bulletVelocity: Vector2D = {
-			x: (dx / distance) * ENEMY_BULLET_SPEED,
-			y: (dy / distance) * ENEMY_BULLET_SPEED,
-		};
+		let bulletVelocity: Vector2D;
+		
+		if (this.enemyType === EnemyType.Heavy) {
+			const trackingStrength = 0.3;
+			const normalizedDx = dx / distance;
+			const normalizedDy = dy / distance;
+			
+			bulletVelocity = {
+				x: normalizedDx * ENEMY_BULLET_SPEED * (1 + trackingStrength),
+				y: normalizedDy * ENEMY_BULLET_SPEED * (1 + trackingStrength),
+			};
+		} else {
+			bulletVelocity = {
+				x: (dx / distance) * ENEMY_BULLET_SPEED,
+				y: (dy / distance) * ENEMY_BULLET_SPEED,
+			};
+		}
+
+		const bulletColor = this.enemyType === EnemyType.Heavy ? ENEMY_HEAVY_BULLET_COLOR : ENEMY_BULLET_COLOR;
 
 		const bullet = new Bullet(
 			{ x: this.position.x, y: this.position.y },
 			ENEMY_BULLET_RADIUS,
-			ENEMY_BULLET_COLOR,
+			bulletColor,
 			bulletVelocity,
 			BulletType.Enemy,
 		);
@@ -180,6 +209,12 @@ export class Enemy extends GameObject {
 
 	public takeDamage(): boolean {
 		this.health--;
+		
+		if (this.maxHealth >= 2 && this.health > 0) {
+			this.damageFlashTime = ENEMY_DAMAGE_FLASH_DURATION;
+			this.color = ENEMY_DAMAGE_FLASH_COLOR;
+		}
+		
 		return this.health <= 0;
 	}
 }
