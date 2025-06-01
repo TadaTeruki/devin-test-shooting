@@ -126,16 +126,6 @@ export const GAMEOVER_TEXT_Y = VIEWPORT_CENTER_Y - 50;
 export const GAMEOVER_BUTTON_Y = VIEWPORT_CENTER_Y + 20;
 export const GAMEOVER_HIGH_SCORE_DISPLAY_X = CANVAS_WIDTH / 2;
 export const GAMEOVER_HIGH_SCORE_DISPLAY_Y = GAMEOVER_TEXT_Y + 40;
-<<<<<<< HEAD
-
-export const INITIAL_LIVES = 3;
-export const PLAYER_RESPAWN_TIME = 1000;
-export const PLAYER_INVINCIBILITY_TIME = 2000;
-export const LIVES_DISPLAY_X = 40;
-export const LIVES_DISPLAY_Y = 40;
-export const LIVES_DISPLAY_SPACING = 40;
-||||||| b70dab2
-=======
 
 export const INITIAL_LIVES = 3;
 export const PLAYER_RESPAWN_TIME = 1000;
@@ -144,4 +134,3 @@ export const PLAYER_BLINK_INTERVAL = 10;
 export const LIVES_DISPLAY_X = 40;
 export const LIVES_DISPLAY_Y = 40;
 export const LIVES_DISPLAY_SPACING = 40;
->>>>>>> origin/main

@@ -104,25 +104,18 @@ export class GameScene extends BaseScene {
 			}
 		}
 
-		if (this.gameState !== GameState.Playing) return;
-
 		const currentTime = Date.now();
 
 		this.camera.update(deltaTime);
 		this.background.update(deltaTime, this.camera);
 
-		this.player.update(deltaTime);
-
-		if (currentTime - this.lastEnemySpawnTime > ENEMY_SPAWN_INTERVAL) {
-			this.spawnEnemy();
-			this.lastEnemySpawnTime = currentTime;
-		}
-
 		for (const enemy of this.enemies) {
 			enemy.update(deltaTime);
-			const bullet = enemy.shoot(this.player.position, currentTime);
-			if (bullet) {
-				this.enemyBullets.push(bullet);
+			if (this.gameState === GameState.Playing) {
+				const bullet = enemy.shoot(this.player.position, currentTime);
+				if (bullet) {
+					this.enemyBullets.push(bullet);
+				}
 			}
 		}
 
@@ -138,7 +131,16 @@ export class GameScene extends BaseScene {
 			particle.update(deltaTime);
 		}
 
-		this.checkCollisions();
+		if (this.gameState === GameState.Playing) {
+			this.player.update(deltaTime);
+
+			if (currentTime - this.lastEnemySpawnTime > ENEMY_SPAWN_INTERVAL) {
+				this.spawnEnemy();
+				this.lastEnemySpawnTime = currentTime;
+			}
+
+			this.checkCollisions();
+		}
 
 		this.cleanupInactiveObjects();
 	}
