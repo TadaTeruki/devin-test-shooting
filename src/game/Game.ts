@@ -56,10 +56,7 @@ export class Game {
 		window.addEventListener("keydown", this.handleKeyDown.bind(this));
 
 		this.preloadImages();
-		this.preloadSounds().then(() => {
-			const soundManager = SoundManager.getInstance();
-			soundManager.playBGM("bgm", 0.2);
-		});
+		this.preloadSounds();
 		this.startFromTitle();
 	}
 
@@ -117,6 +114,9 @@ export class Game {
 
 	resetGame(): void {
 		this.gameState = GameState.Playing;
+
+		const soundManager = SoundManager.getInstance();
+		soundManager.playBGM("bgm", 0.2);
 
 		const gameScene = new GameScene(() => {
 			this.gameState = GameState.GameOver;

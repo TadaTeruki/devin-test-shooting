@@ -42,6 +42,9 @@ export class TitleScene extends BaseScene {
 			console.log("Player image loaded successfully");
 		};
 
+		const soundManager = SoundManager.getInstance();
+		soundManager.stopBGM();
+
 		const uiCenterY = CANVAS_HEIGHT * TITLE_UI_Y_RATIO;
 		this.startButtonBounds = {
 			x: CANVAS_WIDTH / 2 - 100,

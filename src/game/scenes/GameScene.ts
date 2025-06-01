@@ -663,6 +663,7 @@ export class GameScene extends BaseScene {
 		
 		const soundManager = SoundManager.getInstance();
 		soundManager.playSound("player-damage", 0.1);
+		soundManager.stopBGM();
 	}
 
 	private resetGameState(): void {
