@@ -684,5 +684,8 @@ export class GameScene extends BaseScene {
 		this.specialAttackChargeTime = 0;
 		this.specialAttackReady = false;
 		this.specialAttackFlashTimer = 0;
+
+		const soundManager = SoundManager.getInstance();
+		soundManager.playBGM("bgm", 0.2);
 	}
 }
