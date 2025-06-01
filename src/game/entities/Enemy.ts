@@ -161,7 +161,7 @@ export class Enemy extends GameObject {
 		);
 
 		const soundManager = SoundManager.getInstance();
-		soundManager.playSound("enemy-shoot", 0.3);
+		soundManager.playSound("enemy-shoot", 0.1);
 
 		return bullet;
 	}
