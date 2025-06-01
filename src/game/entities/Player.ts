@@ -8,6 +8,7 @@ import {
 	INITIAL_LIVES,
 	PLAYER_RESPAWN_TIME,
 	PLAYER_INVINCIBILITY_TIME,
+	PLAYER_BLINK_INTERVAL,
 } from "../constants";
 import { ImageManager } from "../utils/ImageManager";
 import { GameObject } from "./GameObject";
@@ -73,8 +74,7 @@ export class Player extends GameObject {
 
 		if (this.isBlinking) {
 			this.blinkTimer += deltaTime * 1000;
-			const blinkInterval = 200;
-			const shouldShow = Math.floor(this.blinkTimer / blinkInterval) % 2 === 0;
+			const shouldShow = Math.floor(this.blinkTimer / PLAYER_BLINK_INTERVAL) % 2 === 0;
 			this.color = shouldShow ? this.originalColor : "transparent";
 		}
 	}
