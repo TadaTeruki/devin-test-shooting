@@ -2,14 +2,19 @@ import { Camera } from "../camera/Camera";
 import { HighScoreManager } from "../utils/HighScoreManager";
 import {
 	CANVAS_WIDTH,
-	ENEMY_COLOR,
-	ENEMY_RADIUS,
+
 	ENEMY_SPAWN_INTERVAL,
+	ENEMY_NORMAL_COLOR,
+	ENEMY_FAST_COLOR,
+	ENEMY_HEAVY_COLOR,
+	ENEMY_NORMAL_RADIUS,
+	ENEMY_FAST_RADIUS,
+	ENEMY_HEAVY_RADIUS,
 	KEY_SPACE,
 	PLAYER_BULLET_COLOR,
+	PLAYER_BULLET_FIRE_INTERVAL,
 	PLAYER_BULLET_RADIUS,
 	PLAYER_BULLET_SPEED,
-	PLAYER_BULLET_FIRE_INTERVAL,
 	READY_DISPLAY_DURATION,
 	SCORE_PER_ENEMY,
 	SCORE_DISPLAY_FONT,
@@ -19,12 +24,21 @@ import {
 	HIGH_SCORE_DISPLAY_FONT,
 	HIGH_SCORE_DISPLAY_COLOR,
 	VIEWPORT_CENTER_Y,
+	PARTICLE_LIFETIME,
+	PARTICLE_COUNT_MIN,
+	PARTICLE_COUNT_MAX,
+	PARTICLE_SPEED_MIN,
+	PARTICLE_SPEED_MAX,
+	PARTICLE_RADIUS_MIN,
+	PARTICLE_RADIUS_MAX,
+	PARTICLE_COLORS,
 } from "../constants";
 import { Background } from "../entities/Background";
 import { Bullet } from "../entities/Bullet";
 import { Enemy } from "../entities/Enemy";
+import { Particle } from "../entities/Particle";
 import { Player } from "../entities/Player";
-import { BulletType, GameState } from "../interfaces";
+import { BulletType, GameState, EnemyType } from "../interfaces";
 import type { Vector2D } from "../interfaces";
 import { BaseScene } from "./BaseScene";
 
@@ -33,6 +47,7 @@ export class GameScene extends BaseScene {
 	enemies: Enemy[];
 	playerBullets: Bullet[];
 	enemyBullets: Bullet[];
+	particles: Particle[];
 	background: Background;
 	camera: Camera;
 	lastEnemySpawnTime: number;
@@ -51,6 +66,7 @@ export class GameScene extends BaseScene {
 		this.enemies = [];
 		this.playerBullets = [];
 		this.enemyBullets = [];
+		this.particles = [];
 		this.background = new Background();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
@@ -102,6 +118,10 @@ export class GameScene extends BaseScene {
 			bullet.update(deltaTime);
 		}
 
+		for (const particle of this.particles) {
+			particle.update(deltaTime);
+		}
+
 		this.checkCollisions();
 
 		this.cleanupInactiveObjects();
@@ -122,6 +142,10 @@ export class GameScene extends BaseScene {
 
 		for (const bullet of this.enemyBullets) {
 			bullet.draw(ctx);
+		}
+
+		for (const particle of this.particles) {
+			particle.draw(ctx);
 		}
 
 		ctx.font = SCORE_DISPLAY_FONT;
@@ -175,24 +199,15 @@ export class GameScene extends BaseScene {
 		return Math.min(elapsedSeconds / maxScaleTime, 1);
 	}
 
-	private getEnemyRadiusRange(difficultyScale: number): {
-		min: number;
-		max: number;
-	} {
-		const baseRadius = ENEMY_RADIUS;
-		return {
-			min: baseRadius,
-			max: baseRadius * (1 + difficultyScale), // 最大2倍
-		};
-	}
+
 
 	private spawnEnemy(): void {
 		const currentTime = Date.now();
 		const difficultyScale = this.getDifficultyScale(currentTime);
-		const radiusRange = this.getEnemyRadiusRange(difficultyScale);
-
-		const radius =
-			radiusRange.min + Math.random() * (radiusRange.max - radiusRange.min);
+		
+		const enemyType = this.getRandomEnemyType();
+		const radius = this.getRadiusForEnemyType(enemyType, difficultyScale);
+		const color = this.getColorForEnemyType(enemyType);
 
 		const position: Vector2D = {
 			x: Math.random() * (CANVAS_WIDTH - radius * 2) + radius,
@@ -202,9 +217,10 @@ export class GameScene extends BaseScene {
 		const enemy = new Enemy(
 			position,
 			radius,
-			ENEMY_COLOR,
+			color,
 			this.enemyBullets,
 			this.gameStartTime,
+			enemyType,
 		);
 		this.enemies.push(enemy);
 	}
@@ -261,8 +277,12 @@ export class GameScene extends BaseScene {
 
 				if (bullet.isColliding(enemy)) {
 					bullet.isActive = false;
-					enemy.isActive = false;
-					this.score += SCORE_PER_ENEMY;
+					const isDestroyed = enemy.takeDamage();
+					if (isDestroyed) {
+						this.spawnExplosionParticles(enemy.position);
+						enemy.isActive = false;
+						this.score += SCORE_PER_ENEMY;
+					}
 					break;
 				}
 			}
@@ -273,6 +293,65 @@ export class GameScene extends BaseScene {
 		this.enemies = this.enemies.filter((enemy) => enemy.isActive);
 		this.playerBullets = this.playerBullets.filter((bullet) => bullet.isActive);
 		this.enemyBullets = this.enemyBullets.filter((bullet) => bullet.isActive);
+		this.particles = this.particles.filter((particle) => particle.isActive);
+	}
+
+	private getRandomEnemyType(): EnemyType {
+		const rand = Math.random();
+		if (rand < 0.1) {
+			return EnemyType.Heavy;
+		} else if (rand < 0.55) {
+			return EnemyType.Fast;
+		} else {
+			return EnemyType.Normal;
+		}
+	}
+
+	private getRadiusForEnemyType(type: EnemyType, difficultyScale: number): number {
+		let baseRadius: number;
+		switch (type) {
+			case EnemyType.Normal: baseRadius = ENEMY_NORMAL_RADIUS; break;
+			case EnemyType.Fast: baseRadius = ENEMY_FAST_RADIUS; break;
+			case EnemyType.Heavy: baseRadius = ENEMY_HEAVY_RADIUS; break;
+			default: baseRadius = ENEMY_NORMAL_RADIUS;
+		}
+		return baseRadius * (1 + difficultyScale * 0.5);
+	}
+
+	private getColorForEnemyType(type: EnemyType): string {
+		switch (type) {
+			case EnemyType.Normal: return ENEMY_NORMAL_COLOR;
+			case EnemyType.Fast: return ENEMY_FAST_COLOR;
+			case EnemyType.Heavy: return ENEMY_HEAVY_COLOR;
+			default: return ENEMY_NORMAL_COLOR;
+		}
+	}
+
+	private spawnExplosionParticles(position: Vector2D): void {
+		const particleCount = PARTICLE_COUNT_MIN + 
+			Math.floor(Math.random() * (PARTICLE_COUNT_MAX - PARTICLE_COUNT_MIN + 1));
+
+		for (let i = 0; i < particleCount; i++) {
+			const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.5;
+			const speed = PARTICLE_SPEED_MIN + Math.random() * (PARTICLE_SPEED_MAX - PARTICLE_SPEED_MIN);
+			const radius = PARTICLE_RADIUS_MIN + Math.random() * (PARTICLE_RADIUS_MAX - PARTICLE_RADIUS_MIN);
+			const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+
+			const velocity: Vector2D = {
+				x: Math.cos(angle) * speed,
+				y: Math.sin(angle) * speed,
+			};
+
+			const particle = new Particle(
+				{ x: position.x, y: position.y },
+				radius,
+				color,
+				velocity,
+				PARTICLE_LIFETIME,
+			);
+
+			this.particles.push(particle);
+		}
 	}
 
 	private gameOver(): void {

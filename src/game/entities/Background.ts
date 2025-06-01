@@ -8,11 +8,14 @@ import {
 	BACKGROUND_LEAF_NOISE_THRESHOLD,
 	BACKGROUND_LEAF_COLOR_NOISE_SCALE_X,
 	BACKGROUND_LEAF_COLOR_NOISE_SCALE_Y,
-	BACKGROUND_NOISE_SCALE_X,
-	BACKGROUND_NOISE_SCALE_Y,
 	BACKGROUND_BEACH_COLOR,
 	BACKGROUND_BEACH_RADIUS_FACTOR,
 	BACKGROUND_GRID_SPACING,
+	BACKGROUND_NOISE_SCALE_X,
+	BACKGROUND_NOISE_SCALE_Y,
+	BACKGROUND_ROAD_COLOR,
+	BACKGROUND_ROAD_NOISE_THRESHOLD,
+	BACKGROUND_ROAD_RADIUS,
 	BACKGROUND_SEA_COLOR,
 	BACKGROUND_SEA_NOISE_SCALE,
 	BACKGROUND_SEA_RADIUS_MAX,
@@ -57,13 +60,13 @@ export class Background {
 		const hex1 = color1.replace("#", "");
 		const hex2 = color2.replace("#", "");
 
-		const r1 = parseInt(hex1.substr(0, 2), 16);
-		const g1 = parseInt(hex1.substr(2, 2), 16);
-		const b1 = parseInt(hex1.substr(4, 2), 16);
+		const r1 = Number.parseInt(hex1.substr(0, 2), 16);
+		const g1 = Number.parseInt(hex1.substr(2, 2), 16);
+		const b1 = Number.parseInt(hex1.substr(4, 2), 16);
 
-		const r2 = parseInt(hex2.substr(0, 2), 16);
-		const g2 = parseInt(hex2.substr(2, 2), 16);
-		const b2 = parseInt(hex2.substr(4, 2), 16);
+		const r2 = Number.parseInt(hex2.substr(0, 2), 16);
+		const g2 = Number.parseInt(hex2.substr(2, 2), 16);
+		const b2 = Number.parseInt(hex2.substr(4, 2), 16);
 
 		const r = Math.round(r1 + (r2 - r1) * t);
 		const g = Math.round(g1 + (g2 - g1) * t);
@@ -205,6 +208,17 @@ export class Background {
 		return radius > BACKGROUND_TREE_RADIUS_VISIBLE;
 	}
 
+	// 道路が描画可能かどうかを判定
+	private isRoadAvailable(worldX: number, worldY: number): boolean {
+		if (this.isSeaAvailable(worldX, worldY)) {
+			return false; // 海の上には道路を描画しない
+		}
+
+		const { noiseValue } = this.getTreeNoiseAndRadius(worldX, worldY);
+		const transformedNoise = Math.abs((noiseValue * 2) - 1);
+		return transformedNoise <= BACKGROUND_ROAD_NOISE_THRESHOLD;
+	}
+
 	// ビーチの描画
 	private drawBeach(
 		ctx: CanvasRenderingContext2D,
@@ -320,6 +334,45 @@ export class Background {
 		}
 	}
 
+	private drawRoad(
+		ctx: CanvasRenderingContext2D,
+		camera: Camera,
+		minGridX: number,
+		maxGridX: number,
+		minGridY: number,
+		maxGridY: number,
+	): void {
+		for (let gridX = minGridX; gridX <= maxGridX; gridX++) {
+			for (let gridY = minGridY; gridY <= maxGridY; gridY++) {
+				const worldX = gridX * BACKGROUND_GRID_SPACING;
+				const worldY = gridY * BACKGROUND_GRID_SPACING;
+
+				if (!this.isRoadAvailable(worldX, worldY)) continue;
+
+				const screenPos = camera.worldToScreen({ x: worldX, y: worldY });
+
+				if (
+					screenPos.x >= -BACKGROUND_ROAD_RADIUS &&
+					screenPos.x <= CANVAS_WIDTH + BACKGROUND_ROAD_RADIUS &&
+					screenPos.y >= -BACKGROUND_ROAD_RADIUS &&
+					screenPos.y <= CANVAS_HEIGHT + BACKGROUND_ROAD_RADIUS
+				) {
+					ctx.beginPath();
+					ctx.arc(
+						screenPos.x,
+						screenPos.y,
+						BACKGROUND_ROAD_RADIUS,
+						0,
+						Math.PI * 2,
+					);
+					ctx.fillStyle = BACKGROUND_ROAD_COLOR;
+					ctx.fill();
+					ctx.closePath();
+				}
+			}
+		}
+	}
+
 	// 木の描画
 	private drawTree(
 		ctx: CanvasRenderingContext2D,
@@ -382,7 +435,8 @@ export class Background {
 		// ビーチの描画
 		this.drawBeach(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
 
-		// 海の描画
+		this.drawRoad(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
+
 		this.drawSea(ctx, camera, minGridX, maxGridX, minGridY, maxGridY);
 
 		// 木の影の描画
