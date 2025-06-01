@@ -1,10 +1,15 @@
 import {
 	CANVAS_HEIGHT,
 	CANVAS_WIDTH,
-	GAMEOVER_BACKGROUND_COLOR,
 	GAMEOVER_BUTTON_Y,
 	GAMEOVER_TEXT_Y,
+	GAMEOVER_BACKGROUND_COLOR,
+	HIGH_SCORE_DISPLAY_FONT,
+	HIGH_SCORE_DISPLAY_COLOR,
+	GAMEOVER_HIGH_SCORE_DISPLAY_X,
+	GAMEOVER_HIGH_SCORE_DISPLAY_Y,
 } from "../constants";
+import { HighScoreManager } from "../utils/HighScoreManager";
 import { BaseScene } from "./BaseScene";
 
 export class GameOverScene extends BaseScene {
@@ -49,6 +54,17 @@ export class GameOverScene extends BaseScene {
 			"REPLAY",
 			CANVAS_WIDTH / 2,
 			this.replayButtonBounds.y + this.replayButtonBounds.height / 2,
+		);
+
+		const highScore = HighScoreManager.getHighScore();
+		ctx.font = HIGH_SCORE_DISPLAY_FONT;
+		ctx.fillStyle = HIGH_SCORE_DISPLAY_COLOR;
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.fillText(
+			`High Score: ${highScore.toString().padStart(6, "0")}`,
+			GAMEOVER_HIGH_SCORE_DISPLAY_X,
+			GAMEOVER_HIGH_SCORE_DISPLAY_Y,
 		);
 	}
 

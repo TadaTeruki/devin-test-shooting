@@ -1,4 +1,5 @@
 import { Camera } from "../camera/Camera";
+import { HighScoreManager } from "../utils/HighScoreManager";
 import {
 	CANVAS_WIDTH,
 	ENEMY_COLOR,
@@ -10,6 +11,13 @@ import {
 	PLAYER_BULLET_RADIUS,
 	PLAYER_BULLET_SPEED,
 	READY_DISPLAY_DURATION,
+	SCORE_PER_ENEMY,
+	SCORE_DISPLAY_FONT,
+	SCORE_DISPLAY_COLOR,
+	SCORE_DISPLAY_X,
+	SCORE_DISPLAY_Y,
+	HIGH_SCORE_DISPLAY_FONT,
+	HIGH_SCORE_DISPLAY_COLOR,
 	VIEWPORT_CENTER_Y,
 } from "../constants";
 import { Background } from "../entities/Background";
@@ -28,6 +36,7 @@ export class GameScene extends BaseScene {
 	background: Background;
 	camera: Camera;
 	lastEnemySpawnTime: number;
+	score: number;
 	lastPlayerBulletTime: number;
 	gameState: GameState;
 	onGameOver: () => void;
@@ -45,6 +54,7 @@ export class GameScene extends BaseScene {
 		this.background = new Background();
 		this.camera = new Camera();
 		this.lastEnemySpawnTime = 0;
+		this.score = 0;
 		this.lastPlayerBulletTime = 0;
 		this.gameStartTime = Date.now();
 		this.gameState = GameState.Playing;
@@ -113,6 +123,27 @@ export class GameScene extends BaseScene {
 		for (const bullet of this.enemyBullets) {
 			bullet.draw(ctx);
 		}
+
+		ctx.font = SCORE_DISPLAY_FONT;
+		ctx.fillStyle = SCORE_DISPLAY_COLOR;
+		ctx.textAlign = "right";
+		ctx.textBaseline = "top";
+		ctx.fillText(
+			`SCORE: ${this.score.toString().padStart(6, "0")}`,
+			SCORE_DISPLAY_X,
+			SCORE_DISPLAY_Y,
+		);
+
+		const highScore = HighScoreManager.getHighScore();
+		ctx.font = HIGH_SCORE_DISPLAY_FONT;
+		ctx.fillStyle = HIGH_SCORE_DISPLAY_COLOR;
+		ctx.textAlign = "right";
+		ctx.textBaseline = "top";
+		ctx.fillText(
+			`HIGH SCORE: ${highScore.toString().padStart(6, "0")}`,
+			SCORE_DISPLAY_X,
+			SCORE_DISPLAY_Y + 30,
+		);
 
 		if (!this.isReady) {
 			ctx.font = "bold 48px Arial";
@@ -231,6 +262,7 @@ export class GameScene extends BaseScene {
 				if (bullet.isColliding(enemy)) {
 					bullet.isActive = false;
 					enemy.isActive = false;
+					this.score += SCORE_PER_ENEMY;
 					break;
 				}
 			}
@@ -244,6 +276,7 @@ export class GameScene extends BaseScene {
 	}
 
 	private gameOver(): void {
+		HighScoreManager.setHighScore(this.score);
 		this.gameState = GameState.GameOver;
 		this.onGameOver();
 	}
