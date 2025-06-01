@@ -408,14 +408,23 @@ export class GameScene extends BaseScene {
 		
 		const rand = Math.random();
 		
-		if (elapsedSeconds >= 15 && rand < 0.55) {
-			return EnemyType.Fast;
+		if (elapsedSeconds < 15) {
+			return EnemyType.Normal;
 		}
 		
-		if (elapsedSeconds >= 30 && rand < 0.1) {
+		if (elapsedSeconds < 30) {
+			if (rand < 0.55) {
+				return EnemyType.Fast;
+			}
+			return EnemyType.Normal;
+		}
+		
+		if (rand < 0.1) {
 			return EnemyType.Heavy;
 		}
-		
+		if (rand < 0.4) {
+			return EnemyType.Fast;
+		}
 		return EnemyType.Normal;
 	}
 
