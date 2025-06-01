@@ -211,8 +211,8 @@ export class Enemy extends GameObject {
 		}
 	}
 
-	public takeDamage(): boolean {
-		this.health--;
+	public takeDamage(damage: number = 1): boolean {
+		this.health -= damage;
 		
 		if (this.maxHealth >= 2 && this.health > 0) {
 			this.damageFlashTime = ENEMY_DAMAGE_FLASH_DURATION;
