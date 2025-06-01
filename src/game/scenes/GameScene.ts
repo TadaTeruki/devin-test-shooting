@@ -16,6 +16,8 @@ import {
 	SCORE_DISPLAY_COLOR,
 	SCORE_DISPLAY_X,
 	SCORE_DISPLAY_Y,
+	HIGH_SCORE_DISPLAY_FONT,
+	HIGH_SCORE_DISPLAY_COLOR,
 	VIEWPORT_CENTER_Y,
 } from "../constants";
 import { Background } from "../entities/Background";
@@ -127,9 +129,20 @@ export class GameScene extends BaseScene {
 		ctx.textAlign = "right";
 		ctx.textBaseline = "top";
 		ctx.fillText(
-			this.score.toString().padStart(6, "0"),
+			`SCORE: ${this.score.toString().padStart(6, "0")}`,
 			SCORE_DISPLAY_X,
 			SCORE_DISPLAY_Y,
+		);
+
+		const highScore = HighScoreManager.getHighScore();
+		ctx.font = HIGH_SCORE_DISPLAY_FONT;
+		ctx.fillStyle = HIGH_SCORE_DISPLAY_COLOR;
+		ctx.textAlign = "right";
+		ctx.textBaseline = "top";
+		ctx.fillText(
+			`HIGH SCORE: ${highScore.toString().padStart(6, "0")}`,
+			SCORE_DISPLAY_X,
+			SCORE_DISPLAY_Y + 30,
 		);
 
 		if (!this.isReady) {
